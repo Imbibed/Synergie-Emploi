@@ -11,7 +11,7 @@
         }
       },
       "root": "",
-      "sourceRoot": "src",
+      "sourceRoot": "src/main/webapp/",
       "prefix": "app",
       "architect": {
         "build": {
