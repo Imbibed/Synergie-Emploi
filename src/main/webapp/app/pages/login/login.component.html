@@ -1,0 +1,16 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()">
+  <div class="input-field">
+    <label>
+      Nom utilisateur<sup style="color:red;">*</sup>
+    </label>
+    <input [type]="'text'" [placeholder]="'John Travolta'" formControlName="username"/>
+  </div>
+  <div class="input-field">
+    <label>
+      Mot de passe<sup style="color:red;">*</sup>
+    </label>
+    <input [type]="'password'" [placeholder]="''" formControlName="password"/>
+  </div>
+  <button [type]="'submit'" [disabled]="loginForm.invalid">Se connecter</button>
+<!--  <button (click)="reverseForgotPwd()">Mot de passe oublié</button>-->
+</form>
