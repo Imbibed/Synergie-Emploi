@@ -1,10 +1,17 @@
 package model
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity
+import jakarta.persistence.Entity
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.OneToOne
 import java.time.LocalDate
-
+@Entity
 class JobSeeker : PanacheEntity() {
+
+  @OneToOne(optional = false)
+  @JoinColumn(name = "person_id")
   lateinit var person: Person
+
   lateinit var firstName: String
   lateinit var lastName: String
   lateinit var phoneNumber: String
