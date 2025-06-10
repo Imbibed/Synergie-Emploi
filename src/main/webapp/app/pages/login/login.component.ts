@@ -24,7 +24,7 @@ export class LoginComponent {
 
   onSubmitLogin() {
     if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value).subscribe({
+      /*this.authService.login(this.loginForm.value).subscribe({
         next: (token: {token: string}) => {
           //this.authService.setToken(token.token);
           //this.toastService.addToast({message: `Bienvenue.`, type: 'success'});
@@ -34,7 +34,7 @@ export class LoginComponent {
           //this.toastService.addToast({message: err.error, type: 'error'});
           console.error(err);
         }
-      });
+      });*/
     }
   }
 }

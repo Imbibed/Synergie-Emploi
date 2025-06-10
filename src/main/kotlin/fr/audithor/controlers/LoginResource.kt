@@ -1,7 +1,6 @@
 package fr.audithor.controlers
 
 import fr.audithor.dto.Credentials
-import fr.audithor.dto.UserRole
 import fr.audithor.services.LoginService
 import jakarta.annotation.security.PermitAll
 
@@ -21,7 +20,7 @@ class LoginResource(val loginService: LoginService) {
       try{
         if(loginService.verifyCredentials(credentials.username, credentials.password)){
           val userRole = loginService.getUserRoleByUsername(credentials.username)
-          val token: String = loginService.getToken(userRole)
+          val token: String = loginService.generateToken(userRole)
           return Response.ok(token).build()
         }
         return Response.ok("Mot de passe incorrect").build()

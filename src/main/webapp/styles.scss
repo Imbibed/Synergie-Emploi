@@ -1,3 +1,4 @@
+
 @mixin desktop {
   @media only screen and (min-width: 1200px) {
     @content
@@ -13,6 +14,19 @@
 @mixin mobile {
   @media only screen and (max-width: 768px) {
     @content
+  }
+}
+
+.container-grid {
+  display: grid;
+  @include desktop{
+    grid-template-columns: repeat(12, 1fr);
+  }
+  @include tablet{
+    grid-template-columns: repeat(6, 1fr);
+  }
+  @include mobile{
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

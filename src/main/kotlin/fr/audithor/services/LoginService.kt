@@ -3,7 +3,6 @@ package fr.audithor.services
 import fr.audithor.dto.UserRole
 import io.quarkus.elytron.security.common.BcryptUtil
 import jakarta.enterprise.context.ApplicationScoped
-import model.User
 
 @ApplicationScoped
 class LoginService(val userService: UserService) {
@@ -12,7 +11,7 @@ class LoginService(val userService: UserService) {
     return BcryptUtil.matches(password, user.password)
   }
 
-  fun getToken(userRole: UserRole): String {
+  fun generateToken(userRole: UserRole): String {
     return ""
   }
 
