@@ -9,7 +9,7 @@ import jakarta.persistence.OneToOne
 class Partner : PanacheEntity() {
 
   @OneToOne(optional = false)
-  @JoinColumn(name = "person_id")
+  @JoinColumn(name = "person_id", nullable = false)
   lateinit var person: Person
 
   lateinit var companyName: String

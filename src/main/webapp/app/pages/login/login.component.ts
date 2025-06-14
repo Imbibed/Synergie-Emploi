@@ -23,9 +23,11 @@ export class LoginComponent {
   }
 
   onSubmitLogin() {
+    console.log(this.loginForm.value);
     if (this.loginForm.valid) {
-      /*this.authService.login(this.loginForm.value).subscribe({
+      this.authService.login(this.loginForm.value).subscribe({
         next: (token: {token: string}) => {
+          console.log(token);
           //this.authService.setToken(token.token);
           //this.toastService.addToast({message: `Bienvenue.`, type: 'success'});
           //this.router.navigate(['home']).then();
@@ -34,7 +36,18 @@ export class LoginComponent {
           //this.toastService.addToast({message: err.error, type: 'error'});
           console.error(err);
         }
-      });*/
+      });
     }
+  }
+
+  testLog() {
+    this.authService.isLogged().subscribe({
+      next: (data: any) => {
+        console.log('ok', data);
+      },
+      error: err => {
+        console.error(err);
+      }
+    })
   }
 }

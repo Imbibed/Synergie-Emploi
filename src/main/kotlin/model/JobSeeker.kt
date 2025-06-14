@@ -9,7 +9,7 @@ import java.time.LocalDate
 class JobSeeker : PanacheEntity() {
 
   @OneToOne(optional = false)
-  @JoinColumn(name = "person_id")
+  @JoinColumn(name = "person_id", nullable = false)
   lateinit var person: Person
 
   lateinit var firstName: String
