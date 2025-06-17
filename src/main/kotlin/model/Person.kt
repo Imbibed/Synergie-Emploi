@@ -7,5 +7,6 @@ import jakarta.persistence.Entity
 class Person : PanacheEntity() {
   lateinit var firstName: String
   lateinit var lastName: String
+  lateinit var phoneNumber: String
   var isPartner: Boolean = false
 }

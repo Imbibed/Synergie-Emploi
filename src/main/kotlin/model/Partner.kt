@@ -11,11 +11,9 @@ class Partner : PanacheEntity() {
   @OneToOne(optional = false)
   @JoinColumn(name = "person_id", nullable = false)
   lateinit var person: Person
-
   lateinit var companyName: String
   lateinit var contact: String
   lateinit var address: String
   lateinit var email: String
-  lateinit var phoneNumber: String
   lateinit var businessSector: String
 }

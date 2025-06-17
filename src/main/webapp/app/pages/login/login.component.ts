@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthenticationService} from "../../services/authentication.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -15,22 +16,27 @@ export class LoginComponent {
 
   loginForm: FormGroup;
 
-  constructor(private authService: AuthenticationService){
+  ngOnInit() {
+
+  }
+
+  constructor(private authService: AuthenticationService, private router: Router){
     this.loginForm = new FormGroup({
       username: new FormControl(null, [Validators.required]),
       password: new FormControl(null, [Validators.required])
     });
   }
 
+
+
   onSubmitLogin() {
     console.log(this.loginForm.value);
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
-        next: (token: {token: string}) => {
-          console.log(token);
+        next: () => {
           //this.authService.setToken(token.token);
           //this.toastService.addToast({message: `Bienvenue.`, type: 'success'});
-          //this.router.navigate(['home']).then();
+          this.router.navigate(['home']).then();
         },
         error: err => {
           //this.toastService.addToast({message: err.error, type: 'error'});
@@ -38,16 +44,5 @@ export class LoginComponent {
         }
       });
     }
-  }
-
-  testLog() {
-    this.authService.isLogged().subscribe({
-      next: (data: any) => {
-        console.log('ok', data);
-      },
-      error: err => {
-        console.error(err);
-      }
-    })
   }
 }

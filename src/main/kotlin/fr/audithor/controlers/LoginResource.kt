@@ -46,6 +46,7 @@ class LoginResource(val loginService: LoginService) {
   @Produces(MediaType.APPLICATION_JSON)
   fun isLogged(@Context securityContext: SecurityContext): Response {
     val principal = securityContext.userPrincipal
-    return Response.ok(mapOf("username" to principal.name)).build()
+    val roles = jwt.groups
+    return Response.ok(mapOf("username" to principal.name, "roles" to roles)).build()
   }
 }
