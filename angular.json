@@ -30,7 +30,9 @@
               "src/main/webapp/assets"
             ],
             "styles": [
-              "src/main/webapp/styles.scss"
+              "@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "src/main/webapp/styles.scss",
+              "node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": []
           },
@@ -90,7 +92,9 @@
               "src/main/webapp/assets"
             ],
             "styles": [
-              "src/main/webapp/styles.scss"
+              "@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "src/main/webapp/styles.scss",
+              "node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": []
           }

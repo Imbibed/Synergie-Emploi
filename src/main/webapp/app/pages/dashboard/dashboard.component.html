@@ -1,0 +1,65 @@
+<div class="dashboard-container">
+
+  <!-- Section KPI Emploi -->
+  <section class="kpi-section emploi">
+    <h2>KPI Demandeurs d'emploi</h2>
+
+    <div class="kpi-cards">
+
+            <mat-card class="card pie-card">
+                <mat-card-header>
+                <mat-card-title>Répartition des Statuts</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                <canvas baseChart [data]="pieChartData" [type]="'pie'"></canvas>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="card line-card">
+                <mat-card-header>
+                <mat-card-title>Évolution des Rendez-vous</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                <canvas baseChart
+                        [data]="lineChartData"
+                        [options]="lineChartOptions"
+                        [legend]="true"
+                        [type]="'line'">
+                </canvas>
+                </mat-card-content>
+            </mat-card>
+    </div>
+  </section>
+
+  <!-- Section KPI Partenaire -->
+  <section class="kpi-section partenaire">
+    
+    <h2>KPI Réseau Partenaire</h2>
+
+        <div class="kpi-cards">
+            <mat-card class="card pie-card">
+                <mat-card-header>
+                <mat-card-title>Répartition des Statuts</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                <canvas baseChart [data]="pieChartData" [type]="'pie'"></canvas>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card class="card line-card">
+                <mat-card-header>
+                <mat-card-title>Évolution des Rendez-vous</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                <canvas baseChart
+                        [data]="lineChartData"
+                        [options]="lineChartOptions"
+                        [legend]="true"
+                        [type]="'line'">
+                </canvas>
+                </mat-card-content>
+            </mat-card>
+        </div>
+  </section>
+
+</div>
