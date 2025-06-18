@@ -1,0 +1,397 @@
+<div class="workplace">
+  <!--Profil Header -->
+  <div class="profile-header">
+    <mat-card class="profile-card">
+      <mat-card-title>Informations de profil</mat-card-title>
+      <mat-card-content>
+        <div class="profile-header">
+          <!-- Photo -->
+          <div class="photo-section">
+            <label>
+              <div class="photo"></div>
+              <div class="photo-button">
+                <input type="file" hidden accept="image/*" (change)="onPhotoChange($event)" />
+                <button mat-stroked-button type="button">
+                  <mat-icon>edit</mat-icon>Modifier
+                </button>
+              </div>
+            </label>
+          </div>
+
+          
+          <div class="descriptif-upload-wrapper">
+            <form [formGroup]="form" class="mainForm">
+            <div class="name-fields">
+
+              <mat-form-field appearance="fill">
+                <mat-label>Nom</mat-label>
+                <input matInput formControlName="nom">
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Prénom</mat-label>
+                <input matInput formControlName="prenom">
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="comment-section">
+              <mat-label>Descriptif</mat-label>
+              <textarea matInput rows="2" formControlName="comments"></textarea>
+            </mat-form-field>
+
+            </form>
+
+            <div class="tool-section" #stickyHeader>
+              <!-- Bouton Prendre RDV -->
+              <div class="rdv-button">
+                <button mat-raised-button color="primary" (click)="onNewRdv()">
+                  <mat-icon>calendar_today</mat-icon>
+                  Prendre RDV
+                </button>
+              </div>
+
+              <!-- Bouton Upload -->
+              <div class="upload-button">
+                <label>
+                  <input type="file" hidden accept=".pdf,.doc,.docx" (change)="onFileUpload($event, 'cv')" />
+                </label>
+                <button mat-raised-button color="accent" type="button" (click)="onFileUpload($event, 'cv')">
+                  <mat-icon>attachment</mat-icon>
+                  Joindre un document
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Contenu principal en 2 colonnes -->
+  <div class="main-columns">
+    <!-- Formulaire & historique -->
+    <div class="edit-column">
+      <form [formGroup]="form" class="mainForm">
+        <!-- Contact -->
+        <mat-card class="form-card form-card--micro-3">
+          <mat-card-title>Informations de contact</mat-card-title>
+          <mat-card-content>
+            <mat-form-field appearance="fill">
+              <mat-label>Téléphone</mat-label>
+              <input matInput formControlName="tel">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Portable</mat-label>
+              <input matInput formControlName="portable">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>E-mail</mat-label>
+              <input matInput formControlName="email">
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Informations personnelles -->
+        <mat-card class="form-card form-card--micro-3">
+          <mat-card-title>Informations personnelles</mat-card-title>
+          <mat-card-content>
+
+            <div class="radio-group-container">
+              <span class="radio-group-label">QPV</span>
+              <mat-radio-group formControlName="qpv">
+                <mat-radio-button value="option1">Oui</mat-radio-button>
+                <mat-radio-button value="option2">Non</mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+            <div class="radio-group-container">
+              <span class="radio-group-label">Reconnu travailleur handicapé</span>
+              <mat-radio-group formControlName="rth">
+                <mat-radio-button value="option1">Oui</mat-radio-button>
+                <mat-radio-button value="option2">Non</mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+            <div class="radio-group-container">
+              <span class="radio-group-label">RSA</span>
+              <mat-radio-group formControlName="rsa">
+                <mat-radio-button value="option1">Oui</mat-radio-button>
+                <mat-radio-button value="option2">Non</mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Informations complémentaires -->
+        <mat-card class="form-card form-card--micro-6">
+          <mat-card-title>Informations complémentaires</mat-card-title>
+          <mat-card-content>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Moyens de transport</mat-label>
+              <mat-select formControlName="transportMeans" multiple>
+                <mat-option *ngFor="let transport of transportMeans" [value]="transport.value">
+                  {{ transport.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Types de permis</mat-label>
+              <mat-select formControlName="licenceTypes" multiple>
+                <mat-option *ngFor="let licence of licenceTypes" [value]="licence.value">
+                  {{ licence.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Langues</mat-label>
+              <mat-select formControlName="languages" multiple>
+                <mat-option *ngFor="let lang of languagesList" [value]="lang.value">
+                  {{ lang.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Niveau de diplôme</mat-label>
+              <mat-select formControlName="gradesLevel">
+                <mat-option *ngFor="let gradeLevel of gradesLevel" [value]="gradeLevel.value">
+                  {{ gradeLevel.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Dernier diplôme</mat-label>
+              <input matInput formControlName="lastGrade">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Compétences</mat-label>
+              <mat-select formControlName="skill" multiple>
+                <mat-option *ngFor="let skill of skillsList" [value]="skill.value">
+                  {{ skill.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Suivi de carrière -->
+        <mat-card class="form-card">
+          <mat-card-title>Suivi de carrière</mat-card-title>
+          <mat-card-content>
+
+            <!-- Champ hors FormArray -->
+            <mat-form-field appearance="fill">
+              <mat-label>Poste dernièrement occupé</mat-label>
+              <input matInput formControlName="jobTitle">
+            </mat-form-field>
+
+            <!-- FormArray -->
+            <div formArrayName="experiences">
+              <div *ngFor="let exp of experiencesControls; let i = index" [formGroupName]="i">
+                <mat-form-field appearance="outline">
+                  <mat-label>Entreprise</mat-label>
+                  <input matInput formControlName="company">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Début</mat-label>
+                  <input matInput formControlName="startDate">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Fin</mat-label>
+                  <input matInput formControlName="endDate">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Compétence principale</mat-label>
+                  <input matInput formControlName="skills">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Description</mat-label>
+                  <textarea matInput formControlName="description"></textarea>
+                </mat-form-field>
+
+                <button mat-button color="warn" (click)="removeExperience(i)">Supprimer</button>
+              </div>
+              <button mat-button color="primary" (click)="addExperience()">Ajouter une expérience</button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Localisation -->
+        <mat-card class="form-card">
+          <mat-card-title>Localisation</mat-card-title>
+          <mat-card-content>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Adresse</mat-label>
+              <input matInput formControlName="adresse">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Ville</mat-label>
+              <input matInput formControlName="ville">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Zip code</mat-label>
+              <input matInput formControlName="zipCode">
+            </mat-form-field>
+
+            <!--Carte-->
+            <div class="map-wrapper">
+
+              <div id="map" class="map-container"></div>
+
+              <div class="coordinates-container">
+                <mat-form-field appearance="fill" class="coordinate-field">
+                  <mat-label>Latitude</mat-label>
+                  <input matInput formControlName="latitude" (change)="updateMarker()" />
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="coordinate-field">
+                  <mat-label>Longitude</mat-label>
+                  <input matInput formControlName="longitude" (change)="updateMarker()" />
+                </mat-form-field>
+              </div>
+            </div>
+
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Démarches & Statut -->
+        <mat-card class="form-card">
+          <mat-card-title>Démarches & Statut</mat-card-title>
+          <mat-card-content>
+            <mat-form-field appearance="fill">
+              <mat-label>Date dernier RDV</mat-label>
+              <input matInput [matDatepicker]="picker1" formControlName="dernierRdv">
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Date prochain RDV</mat-label>
+              <input matInput [matDatepicker]="picker2" formControlName="prochainRdv">
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Statut</mat-label>
+              <mat-select formControlName="statut">
+                <mat-option value="Sans emploi">Sans emploi</mat-option>
+                <mat-option value="Retour à l'emploi">Retour à l'emploi</mat-option>
+                <mat-option value="Nouveau demandeur">Nouveau demandeur</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Boutons -->
+        <div class="button-container">
+          <button mat-raised-button class="btn-cancel" type="button" (click)="onCancel()">Annuler</button>
+          <button mat-raised-button class="btn-save" type="submit"><mat-icon>save</mat-icon>Enregistrer</button>
+        </div>
+
+      </form>
+      <!--  Historique des actions -->
+      <mat-card class="history-card">
+        <mat-card-title>Historique des actions</mat-card-title>
+        <mat-card-content>
+          <table mat-table [dataSource]="actions" class="mat-elevation-z2">
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Date</th>
+              <td mat-cell *matCellDef="let action">{{ action.date | date }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Type</th>
+              <td mat-cell *matCellDef="let action">{{ action.type }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="details">
+              <th mat-header-cell *matHeaderCellDef>Détails</th>
+              <td mat-cell *matCellDef="let action">{{ action.details }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['date', 'type', 'details']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['date', 'type', 'details'];"></tr>
+
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- CV maker -->
+    <div class="cv-column">
+      <div class="cv-container">
+        <header class="cv-header">
+          <h1>{{ form.get('nom')?.value }} {{ form.get('prenom')?.value }}</h1>
+          <h2>{{ form.get('jobTitle')?.value }}</h2>
+          <p>{{ form.get('email')?.value }} | {{ form.get('tel')?.value }}</p>
+          <p>{{ form.get('adresse')?.value }} | {{ form.get('zipCode')?.value }} | {{ form.get('ville')?.value }}</p>
+        </header>
+
+        <section class="cv-section">
+          <h3>À propos</h3>
+          <p>{{ form.get('comments')?.value }}</p>
+        </section>
+
+        <section class="cv-section">
+          <h3>Expérience professionnelle</h3>
+          <div *ngFor="let job of form.get('experiences')?.value">
+            <h4>{{ job.skills }} - {{ job.company }}</h4>
+            <p>{{ job.startDate }} - {{ job.endDate }}</p>
+            <p>{{ job.description }}</p>
+          </div>
+        </section>
+
+        <section class="cv-section">
+          <h3>Compétences</h3>
+          <ul>
+            <li *ngFor="let skill of form.get('skills')?.value">{{ skill }}</li>
+          </ul>
+        </section>
+
+        <section class="cv-section">
+          <h3>Formation</h3>
+          <div>
+            <ul>
+              <li>{{ form.get('lastGrade')?.value }} </li>
+            </ul>
+          </div>
+        </section>
+
+         <section class="cv-section">
+          <h3>Permis</h3>
+          <div>
+            <ul>
+              <li *ngFor="let licence of form.get('licenceTypes')?.value"> {{ licence }}</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="cv-section">
+          <h3>Langues</h3>
+          <ul>
+            <li *ngFor="let language of form.get('languages')?.value">{{ language }}</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

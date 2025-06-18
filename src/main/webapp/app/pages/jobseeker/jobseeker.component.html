@@ -1,0 +1,112 @@
+<div class="workplace">
+
+  <div class="titlePage">Liste des demandeurs d'emploi</div>
+
+  <!-- Barre de recherche -->
+  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
+    <mat-label>Recherche</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Rechercher un demandeur...">
+  </mat-form-field>
+
+
+  <!--Tableau des demandeurs d'emploi-->
+  <div class="button-container">
+    <button mat-raised-button class="btn-add" (click)="addJobSeeker()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+
+    <!-- Colonne Sélection 
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="masterToggle()" [checked]="isAllSelected()"
+          [indeterminate]="isSomeSelected()"></mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()" (change)="toggleSelection(row)"
+          [checked]="selection.has(row)"></mat-checkbox>
+      </td>
+    </ng-container>-->
+
+    <ng-container matColumnDef="gender">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Civilité</th>
+      <td mat-cell *matCellDef="let element">{{ element.gender }}</td>
+    </ng-container>
+
+    <!-- Nom -->
+    <ng-container matColumnDef="nom">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
+      <td mat-cell *matCellDef="let element">{{ element.nom }}</td>
+    </ng-container>
+
+    <!-- Prénom -->
+    <ng-container matColumnDef="prenom">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Prénom</th>
+      <td mat-cell *matCellDef="let element">{{ element.prenom }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="qpv">
+      <th mat-header-cell *matHeaderCellDef>QPV</th>
+      <td mat-cell *matCellDef="let element">{{ element.qpv }}</td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="activity">
+      <th mat-header-cell *matHeaderCellDef>Secteur d'activité</th>
+      <td mat-cell *matCellDef="let element">{{ element.activity }}</td>
+    </ng-container>
+
+
+    <!-- Date dernier RDV -->
+    <ng-container matColumnDef="dernierRdv">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date dernier RDV</th>
+      <td mat-cell *matCellDef="let element">{{ element.dernierRdv | date }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="licence">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Permis de conduire</th>
+      <td mat-cell *matCellDef="let element">{{ element.licence }}</td>
+    </ng-container>
+
+    <!-- Statut -->
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let row">
+        <ng-container *ngIf="getStatusDisplay(row.status) as statusInfo">
+          <mat-icon [ngClass]="statusInfo.class" class="mr-1">{{ statusInfo.icon }}</mat-icon>
+          {{ statusInfo.label }}
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action-edit">
+      <th mat-header-cell *matHeaderCellDef class="action-cell"> </th>
+      <td mat-cell *matCellDef="let row" class="action-cell">
+        <button class="icon-button" [matMenuTriggerFor]="menu">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="openEdit(row)">
+            <mat-icon>edit</mat-icon>
+            <span>Modif.</span>
+          </button>
+          <button mat-menu-item (click)="deleteRow(row)">
+            <mat-icon>delete</mat-icon>
+            <span>Supp.</span>
+          </button>
+        </mat-menu>
+      </td>
+    </ng-container>
+
+    <!-- Header et Rows -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelection(row)"
+      style="cursor:pointer; "> </tr>
+
+
+  </table>
+</div>

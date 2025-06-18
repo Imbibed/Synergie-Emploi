@@ -1,16 +1,31 @@
 import { Routes } from '@angular/router';
-import {HomeComponent} from "./pages/home/home.component";
-import {NotfoundComponent} from "./pages/notfound/notfound.component";
-import {LoginComponent} from "./pages/login/login.component";
-import {ForbidenComponent} from "./pages/forbiden/forbiden.component";
-import {authGuardFn} from "./guards/auth.guard";
-import {AdminComponent} from "./pages/admin/admin.component";
-
+import { MainLayout } from "./pages/mainlayout/mainlayout.component";
+import { NotfoundComponent } from "./pages/notfound/notfound.component";
+import { LoginComponent } from "./pages/login/login.component";
+//Demandeur d'emploi
+import { JobseekerComponent } from './pages/jobseeker/jobseeker.component';
+import { JobseekerEditComponent } from './pages/edit-jobseeker/edit-jobseeker.component';
+//Partenaire
+import { PartnersnetworkComponent } from './pages/partnersnetwork/partnersnetwork.component';
+import { EditPartnerComponent } from './pages/edit-partner/edit-partner.component';
+import { AddPartnerComponent } from './pages/add-partner/add-partner.component';
+//Tableau de bord
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 export const routes: Routes = [
-  { path: "", redirectTo: "/login", pathMatch: "full"},
-  { path: "login", component: LoginComponent},
-  { path: "home", component: HomeComponent, canActivate: [authGuardFn], data: {roles: []}},
-  { path: "admin", component: AdminComponent, canActivate: [authGuardFn], data: {roles: ["Administrateur"]}},
-  { path: "forbiden", component: ForbidenComponent},
-  { path: "**", component: NotfoundComponent},
+  {
+    path: '',
+    component: MainLayout,
+    children: [
+      { path: '', redirectTo: 'jobseeker', pathMatch: 'full' }, // page par défaut dans layout
+      { path: 'dashboard', component: DashboardComponent }, //tableau de bord
+      { path: 'jobseeker', component: JobseekerComponent }, //Demandeurs d'emploi
+      { path: 'jobseeker/:id', component: JobseekerEditComponent },//edition d'un demandeur d'emploi
+      { path: 'partner', component: PartnersnetworkComponent },//Réseau partenaire
+      { path: 'add-partner', component: AddPartnerComponent },//page de création d'un nouveau partenaire
+      { path: 'partner/:id', component: EditPartnerComponent },//edition d'un demandeur d'emploi
+
+    ]
+  },
+  { path: 'login', component: LoginComponent },
+  { path: '**', component: NotfoundComponent },
 ];

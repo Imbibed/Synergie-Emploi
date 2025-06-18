@@ -1,0 +1,47 @@
+<mat-sidenav-container class="example-container" autosize>
+
+  <!-- Side Nav -->
+  <mat-sidenav #drawer mode="side" opened>
+
+    <mat-toolbar>
+
+    </mat-toolbar>
+
+    <mat-nav-list mode="over" #drawer>
+      <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+         <mat-icon>dashboard</mat-icon>
+      </a>
+      <a mat-list-item routerLink="/jobseeker" routerLinkActive="active-link" >
+          <mat-icon>accessibility_new</mat-icon>
+      </a>
+      <a mat-list-item routerLink="/partner" routerLinkActive="active-link">
+          <mat-icon>work</mat-icon>
+      </a>
+    </mat-nav-list>
+
+  </mat-sidenav>
+
+  <!-- Main Content -->
+  <mat-sidenav-content>
+
+    <!-- Top Bar -->
+    <mat-toolbar>
+      <button mat-icon-button (click)="drawer.toggle()" class="me-2" aria-label="Toggle menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <div class="app-title">SYNERGIE Emploi</div>
+
+      <span class="spacer"></span>
+
+      <button mat-button class="logoutBtn"  (click)="logout()">Déconnexion</button>
+    </mat-toolbar>
+
+    <!-- Ici le contenu principal (router outlet, etc) -->
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

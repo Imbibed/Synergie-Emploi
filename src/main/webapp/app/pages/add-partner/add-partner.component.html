@@ -1,0 +1,115 @@
+<div class="edit-container">
+
+  <!-- En-tête avec photo et documents -->
+  <mat-card class="profile-card">
+    <mat-card-title>Informations de profil</mat-card-title>
+    <mat-card-content>
+      <div class="profile-header">
+        <!-- Photo -->
+        <div class="photo-section">
+          <label>
+            <div class="photo"></div>
+            <input type="file" hidden accept="image/*" (change)="onPhotoChange($event)" />
+            <button mat-stroked-button type="button">
+              <mat-icon>edit</mat-icon>Modifier
+            </button>
+          </label>
+        </div>
+
+        <div class="descriptif-upload-wrapper">
+          <mat-form-field appearance="fill">
+            <mat-label>Nom de l'entreprise</mat-label>
+            <input matInput formControlName="entreprise">
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="comment-section">
+            <mat-label>Descriptif</mat-label>
+            <textarea matInput rows="4" formControlName="commentaires"></textarea>
+          </mat-form-field>
+
+          <div class="tool-section">
+            <div class="upload-button">
+              <label>
+                <input type="file" hidden accept=".pdf,.doc,.docx" (change)="onFileUpload($event, 'cv')" />
+                <button mat-raised-button color="accent" type="button">
+                  <mat-icon>attachment</mat-icon> Joindre un document
+                </button>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Formulaire principal -->
+  <form [formGroup]="form" class="mainForm">
+
+    <mat-card class="form-card">
+      <mat-card-title>Informations contact</mat-card-title>
+      <mat-card-content>
+        <mat-form-field appearance="fill">
+          <mat-label>Nom</mat-label>
+          <input matInput formControlName="nom">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Prénom</mat-label>
+          <input matInput formControlName="prenom">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Téléphone</mat-label>
+          <input matInput formControlName="tel">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Portable</mat-label>
+          <input matInput formControlName="portable">
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="form-card">
+      <!-- Section localisation -->
+      <mat-card-title>Localisation</mat-card-title>
+      <mat-card-content>
+        <mat-form-field appearance="fill">
+          <mat-label>Adresse</mat-label>
+          <input matInput formControlName="adresse">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Ville</mat-label>
+          <input matInput formControlName="ville">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Zip code</mat-label>
+          <input matInput formControlName="zipCode">
+        </mat-form-field>
+        <!--Carte-->
+        <div class="map-wrapper">
+          <div id="map" class="map-container"></div>
+
+          <div class="coordinates-container">
+            <mat-form-field appearance="fill" class="coordinate-field">
+              <mat-label>Latitude</mat-label>
+              <input matInput [(ngModel)]="latitude" (change)="updateMarker()" />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="coordinate-field">
+              <mat-label>Longitude</mat-label>
+              <input matInput [(ngModel)]="longitude" (change)="updateMarker()" />
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Boutons -->
+    <div class="button-container" style="text-align:center; margin-top: 16px;">
+      <button mat-raised-button class="btn-cancel" (click)="onCancel()">Annuler</button>
+      <button mat-raised-button class="btn-add" (click)="onSave()"><mat-icon>add</mat-icon>Créer</button>
+    </div>
+
+  </form>
+
+</div>
