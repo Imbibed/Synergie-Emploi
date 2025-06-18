@@ -1,4 +1,4 @@
-import { Component, OnInit , ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit , ChangeDetectorRef, AfterViewInit,ViewChild, ElementRef  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -35,12 +35,15 @@ import * as L from 'leaflet';
     MatSelectModule,
     RouterModule,
     MatDatepickerModule,
-    MatNativeDateModule,
+    MatNativeDateModule,  
   ],
   templateUrl: './edit-partner.component.html',
   styleUrls: ['./edit-partner.component.scss']
 })
-export class EditPartnerComponent implements OnInit {
+export class EditPartnerComponent implements OnInit, AfterViewInit {
+
+@ViewChild('stickyHeader') stickyHeader!: ElementRef;
+
   form!: FormGroup;
   partnerId!: string;
   map!: L.Map;
@@ -109,6 +112,21 @@ export class EditPartnerComponent implements OnInit {
           }
         });
       }
+      ngAfterViewInit(): void {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (!entry.isIntersecting) {
+              this.stickyHeader.nativeElement.classList.add('is-sticky');
+            } else {
+              this.stickyHeader.nativeElement.classList.remove('is-sticky');
+            }
+          },
+          { threshold: 0, rootMargin: '0px' }
+        );
+
+        observer.observe(this.stickyHeader.nativeElement);
+      }
+
 
 
         onPhotoChange(event:any){

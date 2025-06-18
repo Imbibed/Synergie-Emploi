@@ -101,6 +101,104 @@ transportMeans = [
 {value: 'transportAdapté', label :'Transport adapté'},
 ];
 
+languagesList = [
+  { value: 'zh-CN', label: 'Chinois (mandarin)' },
+  { value: 'es-ES', label: 'Espagnol' },
+  { value: 'en-US', label: 'Anglais' },
+  { value: 'hi-IN', label: 'Hindi' },
+  { value: 'ar-SA', label: 'Arabe' },
+  { value: 'bn-BD', label: 'Bengali' },
+  { value: 'pt-BR', label: 'Portugais (Brésil)' },
+  { value: 'ru-RU', label: 'Russe' },
+  { value: 'ja-JP', label: 'Japonais' },
+  { value: 'pa-IN', label: 'Panjabi' },
+  { value: 'de-DE', label: 'Allemand' },
+  { value: 'jv-ID', label: 'Javanais' },
+  { value: 'ko-KR', label: 'Coréen' },
+  { value: 'fr-FR', label: 'Français' },
+  { value: 'te-IN', label: 'Télougou' },
+  { value: 'vi-VN', label: 'Vietnamien' },
+  { value: 'mr-IN', label: 'Marathi' },
+  { value: 'tr-TR', label: 'Turc' },
+  { value: 'ta-IN', label: 'Tamoul' },
+  { value: 'ur-PK', label: 'Ourdou' }
+];
+
+skillsList = [
+  { value: 'plomberie', label: 'Plomberie' },
+  { value: 'electricite', label: 'Électricité' },
+  { value: 'menuiserie', label: 'Menuiserie' },
+  { value: 'maçonnerie', label: 'Maçonnerie' },
+  { value: 'carrelage', label: 'Pose de carrelage' },
+  { value: 'peinture', label: 'Peinture intérieure/extérieure' },
+  { value: 'chauffage', label: 'Installation chauffage' },
+  { value: 'climatisation', label: 'Climatisation' },
+  { value: 'soudure', label: 'Soudure' },
+  { value: 'mécanique-auto', label: 'Mécanique automobile' },
+  { value: 'usinage', label: 'Usinage / Fraisage' },
+  { value: 'maintenance-industrielle', label: 'Maintenance industrielle' },
+  { value: 'logistique', label: 'Logistique' },
+  { value: 'conduite-engins', label: 'Conduite d’engins de chantier' },
+  { value: 'caces', label: 'CACES (cariste / chariot élévateur)' },
+  { value: 'pose-menuiserie', label: 'Pose de fenêtres / portes' },
+  { value: 'nettoyage-industriel', label: 'Nettoyage industriel' },
+  { value: 'élingage', label: 'Élingage / Levage' },
+  { value: 'plâtrerie', label: 'Plâtrerie / Isolation' },
+  { value: 'couvreur', label: 'Couverture / Toiture' },
+  // Développement & Tech
+  { value: 'javascript', label: 'JavaScript' },
+  { value: 'typescript', label: 'TypeScript' },
+  { value: 'react', label: 'React.js' },
+  { value: 'angular', label: 'Angular' },
+  { value: 'nodejs', label: 'Node.js' },
+  { value: 'python', label: 'Python' },
+  { value: 'java', label: 'Java' },
+  { value: 'sql', label: 'SQL' },
+  { value: 'devops', label: 'DevOps' },
+  { value: 'docker', label: 'Docker' },
+  { value: 'kubernetes', label: 'Kubernetes' },
+  { value: 'git', label: 'Git' },
+
+  // Data & IA
+  { value: 'data-analysis', label: 'Analyse de données' },
+  { value: 'machine-learning', label: 'Machine Learning' },
+  { value: 'deep-learning', label: 'Deep Learning' },
+  { value: 'powerbi', label: 'Power BI' },
+  { value: 'excel', label: 'Excel avancé' },
+
+  // Gestion de projet
+  { value: 'agile', label: 'Méthodologie Agile' },
+  { value: 'scrum', label: 'Scrum' },
+  { value: 'kanban', label: 'Kanban' },
+  { value: 'jira', label: 'Jira' },
+  { value: 'notion', label: 'Notion' },
+
+  // Design & UX
+  { value: 'ui-design', label: 'UI Design' },
+  { value: 'ux-design', label: 'UX Design' },
+  { value: 'figma', label: 'Figma' },
+  { value: 'adobe-creative-suite', label: 'Adobe Creative Suite' },
+
+  // Communication & Soft Skills
+  { value: 'communication', label: 'Communication' },
+  { value: 'leadership', label: 'Leadership' },
+  { value: 'teamwork', label: 'Travail en équipe' },
+  { value: 'problem-solving', label: 'Résolution de problèmes' },
+  { value: 'time-management', label: 'Gestion du temps' },
+
+  // Marketing & Digital
+  { value: 'seo', label: 'SEO' },
+  { value: 'sem', label: 'SEM / Google Ads' },
+  { value: 'social-media', label: 'Marketing des réseaux sociaux' },
+  { value: 'content-creation', label: 'Création de contenu' },
+
+  // Comptabilité & Business
+  { value: 'finance', label: 'Analyse financière' },
+  { value: 'accounting', label: 'Comptabilité' },
+  { value: 'erp', label: 'ERP (SAP, Oracle, etc.)' },
+  { value: 'crm', label: 'CRM (Salesforce, HubSpot...)' }
+];
+
 dataSource = new MatTableDataSource<any>([]); // ton tableau source ici
 selection = new Set<any>(); // ou MatSelectionModel si tu veux plus avancé
 

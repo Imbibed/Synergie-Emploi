@@ -1,35 +1,4 @@
-@mixin desktop {
-  @media only screen and (min-width: 1200px) {
-    @content;
-  }
-}
-
-@mixin tablet {
-  @media only screen and (min-width: 769px) and (max-width: 1199px) {
-    @content;
-  }
-}
-
-@mixin mobile {
-  @media only screen and (max-width: 768px) {
-    @content;
-  }
-}
-
-.container-grid {
-  display: grid;
-  @include desktop{
-    grid-template-columns: repeat(12, 1fr);
-  }
-  @include tablet{
-    grid-template-columns: repeat(6, 1fr);
-  }
-  @include mobile{
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* potentialy useless for a business app */
+/*EN TETE SCSS*/
 /* Container max-width responsive */
 @mixin container {
   display: block;
@@ -48,7 +17,8 @@
 
   @include mobile {
     max-width: 100%;
-        .coordinates-container {
+
+    .coordinates-container {
       flex-direction: column;
     }
 
@@ -60,258 +30,88 @@
     .descriptif-upload-wrapper {
       width: 100%;
     }
+
+    .jobseeker-workplace {
+      flex-direction: column;
+      padding: 0 12px;
+    }
+
+    .edit-container,
+    .CV-maker {
+      max-width: 100%;
+      flex: none;
+      padding: 0;
+    }
   }
 }
 
-html, body {
-  height: 100%;
-}
 
+$primary-color: #247f9a;
+$secondary-color: #84D1C7;
+$text-color: #333;
+$background-color: #f4f4f4;
+
+$warning-color :#d41818;
+$success-color : #84D1C7;
+$stable-color : #0e87ce;
+$border-radius: 8px;
+
+html,
 body {
+  height: 100%;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-/*===jobseekerworkplace ===*/
-.jobseeker-workplace {
-  display: flex; // Active Flexbox
-  justify-content: center; // Centre les colonnes
-  align-items: flex-start; // Alignement en haut
-  gap: 40px; // Espacement entre les colonnes
-  width: 100%; // Prend toute la largeur de l'écran
-  padding: 20px;
-  box-sizing: border-box;
-
-}
-.CV-maker {
-  flex: 1; // Prend l'espace disponible
-  max-width: 40%; // Ajuste la largeur
-  overflow: hidden;
-}
-
-.jobseeker-workplace > .edit-container {
-  flex: 1; // Prend l'espace disponible
-  max-width: 48%; // Assure que la colonne prend la moitié de l'écran
-}
-
-.cv-container {
-  width: 100%; // S'assure que le CV prend toute la largeur de son conteneur
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-/* === Edit Container === */
-.edit-container {
-  display: block !important;
-  max-width: 1000px;
-  margin: auto;
-  padding: 24px;
-
-      .edit-container > mat-card {
-        display: block !important;
-        width: 100% !important;
-        margin-bottom: 24px !important;
-      }
-      mat-card {
-          width: 100%;
-          margin-bottom: 24px;
-          display: block;
-
-        mat-card-title {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 20px;
-          font-weight: 600;
-          padding-left: 16px;
-          margin-bottom: 16px;
-          color: rgb(119, 119, 119);
-        }
-      }
-
-}
-
-/*===Gestion des pages vues ===*/
-.contener-view{
-      .titlePage {
-        text-align: center;
-        font-family: 'Open Sans';
-        font-size: 40px;
-        letter-spacing: 2px;
-        background-color: #F5F5F5;
-        color: rgba(14, 216, 196, 0.897);
-        border-radius: 12px;
-        padding-top: 5px;
-        padding: 20px;
-       //box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
-        margin: 60px;
-    }
-  }
-/*=== Gestion des tableau ===*/
-table.mat-elevation-z8 {
-  width: 100%;
-  margin-top: 2rem;
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: #fff;
-  box-shadow: 0 4px 12px rgba(36, 127, 154, 0.15);
-
-  th.mat-header-cell {
-    background-color: #F5F5F5 ;
-    color: #247f9a;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-align: left;
-    padding: 14px 16px;
-    border-bottom: 2px solid #d0ecef;
-  }
-
-  td.mat-cell {
-    font-size: 0.9rem;
-    padding: 12px 16px;
-    color: #444;
-    border-bottom: 1px solid #f1f1f1;
-    vertical-align: middle;
-  }
-
-  tr.mat-row:hover {
-    background-color: #f4fcff;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-
-  mat-checkbox {
-    margin-left: 8px;
-  }
-
- tr:hover {
-    background-color: #f4fcff;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-}
-
-}
-
-/* Badges de statut */
-.badge-status {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 16px;
-  color: #fff;
-  min-width: 100px;
-  text-align: center;
-  text-transform: uppercase;
-
-  &--1 {
-    background-color: #e74c3c;
-  }
-
-  &--2 {
-    background-color: #2ecc71;
-  }
-
-  &--3 {
-    background-color: #3498db;
-  }
-}
-
-/* Responsive : table compacte */
-@media (max-width: 768px) {
-  table.mat-elevation-z8 {
-    font-size: 0.85rem;
-
-    th.mat-header-cell,
-    td.mat-cell {
-      padding: 10px 12px;
-    }
-  }
-
-  .badge-status {
-    min-width: unset;
-    font-size: 0.7rem;
-    padding: 3px 8px;
-  }
-}
-.button-container {
+.workplace {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem;
 
-.button-container button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-/* Bouton Ajouter en bleu */
-.btn-add {
-  background-color: #3498db;
-}
-.btn-add:hover {
-  background-color: #2980b9;
-}
-
-/* Bouton Supprimer en rouge */
-.btn-delete {
-  background-color: #e74c3c;
-}
-.btn-delete:hover {
-  background-color: #c0392b;
-}
-/*SURCHAGE*/
-::ng-deep .mat-paginator {
-  font-size: 0.85rem;
-  background-color: #f7f7f7;
-  border-radius: 0 0 12px 12px;
-}
-
-
-
-/* === Header === */
-.profile-header {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-  align-items: flex-start;
-
-  .photo-section {
+  // === BANDEAU PROFIL === //
+  .profile-header {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
+    justify-content: center;
+    align-items: stretch;
 
-    .photo {
-      width: 160px;
-      height: 160px;
-      background: #ddd;
-      border-radius: 50%;
-      border: 1px solid #247f9a;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.12);
-      object-fit: cover;
-      transition: box-shadow 0.3s ease;
+
+    .profile-card {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
     }
 
-     .photo-button {
+    /*ESPACE GESTION DE LA PHOTO*/
+    .photo-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 2rem;
+      transition: all 0.3s ease;
+
+      .photo {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background-color: $background-color;
+        background-size: cover;
+        background-position: center;
+        margin-bottom: 0.5rem;
+        border: 1px solid $primary-color;
+      }
+
+      .photo-button {
         display: flex;
 
         button {
-          display: flex;
+          justify-content: center;
           gap: 8px;
-          font-weight: 600;
-          font-size: 14px;
           border-radius: 8px;
           text-transform: none;
-          color: white;
-          background-color: #247f9a;
+          color: white !important;
+          background-color: $primary-color;
           box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
           transition: background-color 0.3s ease, box-shadow 0.3s ease;
           width: 100%;
@@ -321,273 +121,535 @@ table.mat-elevation-z8 {
           }
 
           &:hover {
-            background-color: darken(#247f9a, 5%);
+            background-color: darken($primary-color, 5%);
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
           }
         }
       }
-}
-  .descriptif-upload-wrapper {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-width: 280px;
+    }
 
-    .comment-section {
-      margin-bottom: 12px;
-      textarea {
+    /*ESPACE DESCRITPTION ET PIECE JOINTE*/
+    .descriptif-upload-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      .name-fields {
+        display: flex;
+        gap: 1rem;
+
+        mat-form-field {
+          flex: 1;
+        }
+      }
+
+      .comment-section {
         width: 100%;
-        resize: vertical;
-        min-height: 120px;
-        font-size: 1rem;
-        padding: 8px;
+      }
+
+      .tool-section {
+        display: flex;
+        gap: 1.5rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: white;
+        padding: 1rem 0;
+        border-bottom: 1px solid #ddd;
+        transition: all 0.3s ease;
+
+        &.is-sticky {
+          .tool-section {
+            opacity: 0;
+            visibility: hidden;
+            height: 0;
+            overflow: hidden;
+          }
+        }
+
+        .tool-section.is-sticky {
+          position: sticky;
+          top: 0;
+          z-index: 10;
+          background-color: white;
+          padding: 1rem 0;
+          border-bottom: 1px solid #ddd;
+        }
+
+        button,
+        .rdv-button,
+        .upload-button {
+          display: flex;
+          align-items: end;
+          gap: 8px;
+          padding: 10px;
+          font-size: 17px;
+          border-radius: 8px;
+          text-transform: none;
+          color: white;
+          background-color: $primary-color !important;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+          transition: background-color 0.3s ease, box-shadow 0.3s ease;
+          min-width: 150px;
+
+
+          mat-icon {
+            font-size: 20px;
+          }
+
+          &:hover {
+            background-color: darken($primary-color, 5%);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+          }
+        }
+
+        input[type='file'] {
+          display: none;
+        }
+      }
+    }
+  }
+
+  // === DEUX COLONNES PRINCIPALES === //
+  .main-columns {
+    display: flex;
+    gap: 2rem;
+
+    // FORMULAIRE À GAUCHE
+    .edit-column {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .form-card {
+        mat-card-title {
+          font-weight: bold;
+          font-size: 1.2rem;
+          align-items: center;
+          gap: 8px;
+          padding-left: 16px;
+          margin-bottom: 16px;
+          color: $text-color;
+        }
+
+        mat-card-content {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+
+        }
+
+        .icon-label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: $text-color;
+        }
+
+        mat-icon {
+          color: $text-color;
+        }
+
+        .radio-group-container {
+          color: $text-color;
+          position: relative;
+          border: 1px solid $primary-color;
+          padding: 16px 12px 12px 12px;
+          margin-top: 16px;
+
+          .radio-group-label {
+            position: absolute;
+            top: -10px;
+            left: 12px;
+            background: #fff;
+            padding: 0 6px;
+            color: #000;
+          }
+        }
+      }
+
+      .map-wrapper {
+        margin-top: 1rem;
+
+        .map-container {
+          height: 200px;
+          width: 100%;
+          border-radius: 6px;
+          background-color: $background-color;
+          margin-bottom: 1rem;
+        }
+
+        .coordinates-container {
+          display: flex;
+          gap: 1rem;
+
+          .coordinate-field {
+            flex: 1;
+          }
+        }
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 16px;
+
+        .btn-cancel {
+          background-color: $background-color !important;
+          color: $text-color !important;
+
+          &:hover {
+            background-color: $text-color;
+          }
+        }
+
+        .btn-save {
+          background-color: $primary-color !important;
+          color: $background-color !important;
+
+          &:hover {
+            background-color: darken($primary-color, 5%) !important;
+            color: $background-color !important;
+          }
+        }
+      }
+
+      .history-card {
+        table {
+          width: 100%;
+          margin-top: 1rem;
+        }
+
+        th,
+        td {
+          padding: 0.5rem;
+        }
       }
     }
 
-.tool-section {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-
-  .upload-button,
-  .rdv-button {
-    display: flex;
-    align-items: center;
-
-    button {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      font-weight: 600;
-      font-size: 14px;
+    // CVMAKER À DROITE
+    .cv-column {
+      flex: 1.5;
+      background-color: $background-color;
       border-radius: 8px;
-      text-transform: none;
-      color: white;
-      background-color: #247f9a;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      min-width: 150px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      height: fit-content;
 
-      mat-icon {
-        font-size: 20px;
+      .cv-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        background: $background-color;
+        border-radius: $border-radius;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+        .cv-header {
+          text-align: center;
+          background: $primary-color;
+          color: white;
+          padding: 20px;
+          border-radius: $border-radius $border-radius 0 0;
+
+
+          h1 {
+            margin: 0;
+            font-size: 1.5rem;
+          }
+
+          h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: $secondary-color;
+          }
+
+          p {
+            margin: 0.2rem 0;
+            //color: #777;
+          }
+        }
+
+        .cv-section {
+          margin-top: 20px;
+          padding: 15px;
+          background: $background-color;
+          border-radius: $border-radius;
+          color: $primary-color;
+
+
+          h3 {
+            font-size: 1.1rem;
+            border-bottom: 2px solid $secondary-color;
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
+          }
+
+          ul {
+            list-style: none;
+            padding: 0;
+          }
+
+          li {
+            margin-bottom: 0.3rem;
+            background: $primary-color;
+            color: white;
+            padding: 5px 10px;
+            margin: 5px 5px;
+            border-radius: $border-radius;
+            display: inline-block;
+          }
+
+          h4 {
+            margin: 0.5rem 0 0.2rem;
+            font-size: 1rem;
+            color: $primary-color;
+          }
+
+          p {
+            margin: 0.2rem 0;
+          }
+        }
       }
+    }
+  }
+
+
+  .titlePage {
+    text-align: center;
+    font-family: 'Open Sans';
+    font-size: 40px;
+    letter-spacing: 2px;
+    background-color: $background-color;
+    color: $primary-color;
+    border-radius: 12px;
+    padding-top: 5px;
+    padding: 20px;
+    //box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+    margin: 60px;
+  }
+
+
+  /*=== Gestion des tableau ===*/
+  table.mat-elevation-z8 {
+    width: 100%;
+    margin-top: 2rem;
+    border-radius: 12px;
+    overflow: hidden;
+    //background-color:$background-color;
+    box-shadow: 0 4px 12px rgba(36, 127, 154, 0.15);
+
+    th.mat-header-cell {
+      background-color: $background-color;
+      color: $primary-color;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: left;
+      padding: 14px 16px;
+      border-bottom: 2px solid $background-color;
+    }
+
+    td.mat-cell {
+      font-size: 0.9rem;
+      padding: 12px 16px;
+      color: $text-color;
+      border-bottom: 1px solid #f1f1f1;
+      vertical-align: middle;
+    }
+
+    tr.mat-row:hover {
+      background-color: $background-color;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    mat-checkbox {
+      margin-left: 8px;
+    }
+
+    .icon-button {
+      background: none;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      margin: 0 auto;
 
       &:hover {
-        background-color: darken(#247f9a, 5%);
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        color: #000;
       }
     }
 
-    input[type="file"] {
-      display: none;
-    }
-  }
-}
-  }
-}
-/* === Formulaire === */
-.mainForm {
-  display: flex;
-  flex-direction: column;
-  gap: 24px; // espace entre les cartes
-  padding-bottom: 20px;
+     mat-icon {
+      font-size: 24px;
+      vertical-align: middle;
 
-  mat-card-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
-  }
+      &.icon-success {
+        color: #4caf50; // vert
+      }
 
-  mat-form-field {
-    width: 100%;
-  }
+      &.icon-warning {
+        color: #ff9800; // orange
+      }
 
-  .comment-section {
-    grid-column: 1 / -1;
-  }
+      &.icon-neutral {
+        color: #607d8b; // gris/bleu
+      }
 
-  .map-wrapper {
-    grid-column: 1 / -1;
-  }
-
-  .history-card {
-    table {
-      width: 100%;
+      &.icon-default {
+        color: #bdbdbd; // gris clair
+      }
     }
 
-    th, td {
-      text-align: left;
+
+    tr:hover {
+      background-color: $background-color;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
     }
   }
-}
 
-/* === Boutons === */
-.button-container {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 16px;
+  /* Badges de statut */
+  /*.badge-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 16px;
+    color: $text-color;
+    min-width: 100px;
+    text-align: center;
+    text-transform: uppercase;
+
+   /* &--1 {
+      background-color: $warning-color;
+    }
+
+    &--2 {
+      background-color: $success-color;
+    }
+
+    &--3 {
+      background-color: $stable-color;
+    }
 
 
-  button {
-    display: flex;              // important
-    align-items: center;        // aligne icône + texte verticalement
-    gap: 8px;                   // espace entre icône et texte
+  }*/
+
+  /* Responsive : table compacte */
+  @media (max-width: 768px) {
+    table.mat-elevation-z8 {
+      font-size: 0.85rem;
+
+      th.mat-header-cell,
+      td.mat-cell {
+        padding: 10px 12px;
+      }
+    }
+
+    .badge-status {
+      min-width: unset;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+    }
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .button-container button {
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
+    color: white;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+  }
 
-    mat-icon {
-      font-size: 20px;
+  /* Bouton Ajouter en bleu */
+  .btn-add {
+    background-color: $primary-color;
+  }
+
+  .btn-add:hover {
+    background-color: darken($primary-color, 5%) !important;
+  }
+
+  /* Bouton Supprimer en rouge */
+  .btn-delete {
+    background-color: $warning-color;
+  }
+
+  .btn-delete:hover {
+    background-color: darken($warning-color, 5%) !important;
+  }
+
+  /*SURCHAGE*/
+  ::ng-deep .mat-paginator {
+    font-size: 0.85rem;
+    background-color: $background-color;
+    border-radius: 0 0 12px 12px;
+  }
+
+  /* === Carte Leaflet === */
+  .map-wrapper {
+    width: 100%;
+  }
+
+  /*=== Gestion du leaflet ===*/
+  .map-container {
+    width: 100%;
+    height: 400px; // Hauteur fixe, à ajuster si besoin
+    margin-bottom: 12px;
+    border-radius: 8px; // Coins arrondis optionnels
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre subtile optionnelle
+  }
+
+  .coordinates-container {
+    display: flex;
+    gap: 16px; // espace entre les inputs
+    flex-wrap: wrap; // responsive : les inputs passent à la ligne si petit écran
+  }
+
+  .coordinate-field {
+    flex: 1 1 200px; // minimum 200px, s’étire si possible
+    min-width: 120px;
+  }
+
+
+  // === RESPONSIVE === //
+  @media (max-width: 1024px) {
+    .main-columns {
+      flex-direction: column;
+
+      .cv-column {
+        order: 2;
+      }
+
+      .edit-column {
+        order: 1;
+      }
     }
-  }
 
-  .btn-save, .batn-add, .btn-action{
-    background-color: #247f9a!important;
-    color: #fff !important;
+    .profile-header {
+      flex-direction: column;
+      align-items: stretch;
 
-    &:hover {
-      background-color: darken(#247f9a, 5%) !important;
-      color: #fff !important;
-    }
-  }
+      .name-fields {
+        flex-direction: column;
+      }
 
-  .btn-cancel {
-    background-color: #ffffff !important;
-    color: #000 !important;
-
-    &:hover {
-      background-color: #494e7e;
-    }
-  }
-
-}
-
-/*===Bouton radio & dropdown ===*/
-mat-radio-group {
-  display: flex;
-  gap: 8px; // Espacement réduit entre les boutons
-}
-
-mat-radio-button {
-  font-size: 14px;
-  color: #ff0000; // Couleur neutre
-  padding: 4px;
-
-  .mat-radio-inner-circle {
-    background-color: #555; // Gris discret pour le cercle
-  }
-
-  .mat-radio-outer-circle {
-    border-color: #777; // Bord légèrement foncé
-  }
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.03); // Effet subtil au survol
-  }
-}
-
-/* === Carte Leaflet === */
-.map-wrapper {
-  width: 100%;
-}
-
-/*=== Gestion du leaflet ===*/
-.map-container {
-  width: 100%;
-  height: 400px;  // Hauteur fixe, à ajuster si besoin
-  margin-bottom: 12px;
-  border-radius: 8px;  // Coins arrondis optionnels
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Ombre subtile optionnelle
-}
-
-.coordinates-container {
-  display: flex;
-  gap: 16px;        // espace entre les inputs
-  flex-wrap: wrap;  // responsive : les inputs passent à la ligne si petit écran
-}
-
-.coordinate-field {
-  flex: 1 1 200px; // minimum 200px, s’étire si possible
-  min-width: 120px;
-}
-
-/*===CV MAKERS ===*/
-$primary-color: #247f9a;
-$secondary-color: #84D1C7;
-$text-color: #333;
-$background-color: #f4f4f4;
-$border-radius: 8px;
-
-.cv-container {
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
-  background: white;
-  border-radius: $border-radius;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.cv-header {
-  text-align: center;
-  background: $primary-color;
-  color: white;
-  padding: 20px;
-  border-radius: $border-radius $border-radius 0 0;
-
-  h1 {
-    margin: 0;
-    font-size: 2em;
-  }
-
-  h2 {
-    margin: 5px 0;
-    font-size: 1.5em;
-    color: $secondary-color;
-  }
-
-  p {
-    font-size: 1em;
-    margin-top: 10px;
-  }
-}
-
-.cv-section {
-  margin-top: 20px;
-  padding: 15px;
-  background: $background-color;
-  border-radius: $border-radius;
-  color: $primary-color;
-
-  h3 {
-    color: $primary-color;
-    border-bottom: 2px solid $secondary-color;
-    padding-bottom: 5px;
-  }
-
-  h4 {
-    margin-top: 10px;
-    color: $primary-color;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-
-    li {
-      background: $secondary-color;
-      color: white;
-      padding: 5px 10px;
-      margin: 5px 0;
-      border-radius: $border-radius;
-      display: inline-block;
+      .tool-section {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
     }
   }
 }
