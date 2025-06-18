@@ -19,10 +19,10 @@ export const routes: Routes = [
       { path: '', redirectTo: 'jobseeker', pathMatch: 'full' }, // page par défaut dans layout
       { path: 'dashboard', component: DashboardComponent }, //tableau de bord
       { path: 'jobseeker', component: JobseekerComponent }, //Demandeurs d'emploi
-      { path: 'jobseeker/:id', component :JobseekerEditComponent },//edition d'un demandeur d'emploi
+      { path: 'jobseeker/:id', component: JobseekerEditComponent },//edition d'un demandeur d'emploi
       { path: 'partner', component: PartnersnetworkComponent },//Réseau partenaire
       { path: 'add-partner', component: AddPartnerComponent },//page de création d'un nouveau partenaire
-      { path: 'partner/:id', component :EditPartnerComponent },//edition d'un demandeur d'emploi
+      { path: 'partner/:id', component: EditPartnerComponent },//edition d'un demandeur d'emploi
 
     ]
   },
