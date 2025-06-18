@@ -14,5 +14,11 @@ class JobSeeker : PanacheEntity() {
   lateinit var person: Person
   lateinit var email: String
   lateinit var registrationDate: LocalDate
+  lateinit var status: JobSeekerStatus
   var rgpdConsent: Boolean = false
+}
+
+enum class JobSeekerStatus{
+  ACTIF,
+  INACTIF
 }

@@ -14,7 +14,7 @@ class JobSeekerService(private val jobSeekerRepository: JobSeekerRepository) {
     return jobSeekers.map { DtoMapper.toDto(it) }
   }
 
-  fun getJobSeekerById(id: Int): JobSeeker {
-    return jobSeekerRepository.findById(id.toLong())
+  fun getJobSeekerById(id: Long): JobSeeker {
+    return jobSeekerRepository.findById(id)
   }
 }

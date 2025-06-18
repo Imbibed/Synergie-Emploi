@@ -3,6 +3,7 @@ package fr.audithor.controlers
 import fr.audithor.services.JobSeekerService
 import jakarta.annotation.security.RolesAllowed
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -26,8 +27,16 @@ class JobSeekerResource(private val jobSeekerService: JobSeekerService) {
   @Path("/{jobSeekerId}")
   @RolesAllowed("Administrateur", "Conseiller Insertion", "Agent Accueil", "Responsable Relation Pro")
   @Produces(MediaType.APPLICATION_JSON)
-  fun getJobSeeker(@PathParam("jobSeekerId") id: Int): Response {
+  fun getJobSeeker(@PathParam("jobSeekerId") id: Long): Response {
     val jobSeeker: JobSeeker = jobSeekerService.getJobSeekerById(id)
     return Response.ok(jobSeeker).build()
+  }
+
+  @PUT
+  @Path("/{jobSeekerId}")
+  @RolesAllowed("Administrateur", "Conseiller Insertion", "Agent Accueil", "Responsable Relation Pro")
+  @Produces(MediaType.APPLICATION_JSON)
+  fun updateJobSeeker(@PathParam("jobSeekerId") jobSeekerId: Long): Response {
+    return Response.ok().build()
   }
 }
