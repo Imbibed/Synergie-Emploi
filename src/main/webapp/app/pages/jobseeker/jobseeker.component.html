@@ -75,16 +75,12 @@
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Statut</th>
       <td mat-cell *matCellDef="let row">
-        <mat-icon [ngClass]="getStatusIconClass(row.status)">
-          {{ getStatusIconName(row.status) }}
-        </mat-icon>
-        <span *matCellDef="let element">
-          Mon status - {{element.status}}
-        </span>
+        <ng-container *ngIf="getStatusDisplay(row.status) as statusInfo">
+          <mat-icon [ngClass]="statusInfo.class" class="mr-1">{{ statusInfo.icon }}</mat-icon>
+          {{ statusInfo.label }}
+        </ng-container>
       </td>
     </ng-container>
-
-
 
     <ng-container matColumnDef="action-edit">
       <th mat-header-cell *matHeaderCellDef class="action-cell"> </th>

@@ -42,9 +42,9 @@ export class JobseekerComponent implements OnInit {
   ngOnInit() {
     // Simule des données — remplace par le service back
     this.dataSource.data = [
-      { id: 1, gender: 'Mme', nom: 'Durand', prenom: 'Sophie', qpv: "true", activity: 'BTP', dernierRdv: new Date(), licence: 'Permis B', status: 1 },
-      { id: 2, gender: 'Mme', nom: 'Dupond', prenom: 'Janine', qpv: "true", activity: 'BTP', dernierRdv: new Date(), licence: 'Permis B', status: 2 },
-      { id: 3, gender: 'M.', nom: 'Bernard', prenom: 'Robert', qpv: "true", activity: 'BTP', dernierRdv: new Date(), licence: 'Permis B', status: 3 },
+      { id: 1, gender: 'Mme', nom: 'Durand', prenom: 'Sophie', qpv: "oui", activity: 'BTP', dernierRdv: new Date(), licence: 'Permis B', status: 1 },
+      { id: 2, gender: 'Mme', nom: 'Dupond', prenom: 'Janine', qpv: "oui", activity: 'BTP', dernierRdv: new Date(), licence: 'Permis B', status: 2 },
+      { id: 3, gender: 'M.', nom: 'Bernard', prenom: 'Robert', qpv: "non", activity: 'BTP', dernierRdv: new Date(), licence: 'Permis B', status: 3 },
     ];
   }
 
@@ -113,4 +113,18 @@ getStatusIconClass(status: number): string {
     3: 'icon-neutral'
   }[status] || 'icon-default';
 }
+
+getStatusDisplay(status: number): { icon: string; label: string; class?: string } {
+  switch (status) {
+    case 1:
+      return { icon: 'error', label: 'Sans Emploi', class: 'icon-error' };
+    case 2:
+      return { icon: 'check_circle', label: 'Sous contrat', class: 'icon-success' };
+    case 3:
+      return { icon: 'hourglass_empty', label: 'Nouveau', class: 'icon-pending' };
+    default:
+      return { icon: 'help_outline', label: 'Inconnu', class: 'icon-default' };
+  }
+}
+
 }
