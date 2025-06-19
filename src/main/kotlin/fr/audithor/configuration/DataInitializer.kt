@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
 import model.Role
+import model.RoleName
 import model.User
 
 @Startup
@@ -15,13 +16,6 @@ import model.User
 class DataInitializer(
   private val userRepository: UserRepository,
   private val roleRepository: RoleRepository) {
-
-  companion object {
-    const val ADMIN_ROLE_NAME = "Administrateur"
-    const val INS_ROLE_NAME = "Conseiller Insertion"
-    const val ACC_ROLE_NAME = "Agent Accueil"
-    const val REL_ROLE_NAME = "Responsable Relation Pro"
-  }
 
   @PostConstruct
   fun init() {
@@ -33,23 +27,17 @@ class DataInitializer(
   fun initRoles() {
     if(roleRepository.count() == 0L) {
       val roleAdmin = Role().apply {
-        name = ADMIN_ROLE_NAME
+        name = RoleName.ADMINISTRATEUR
       }
       val roleIns = Role().apply {
-        name = INS_ROLE_NAME
+        name = RoleName.CONSEILLER_INSERTION
       }
       val roleAcc = Role().apply {
-        name = ACC_ROLE_NAME
+        name = RoleName.AGENT_ACCUEIL
       }
       val roleRel = Role().apply {
-        name = REL_ROLE_NAME
+        name = RoleName.RESPONSABLE_RELATION_PRO
       }
-
-      roleIns.name = INS_ROLE_NAME
-
-      roleAcc.name = ACC_ROLE_NAME
-
-      roleRel.name = REL_ROLE_NAME
       roleRepository.persist(roleAdmin,roleIns,roleAcc,roleRel)
     }
   }
@@ -59,10 +47,10 @@ class DataInitializer(
     if (userRepository.count() == 0L) {
       val hashedPassword = BcryptUtil.bcryptHash("test")
 
-      val adminRole = roleRepository.find("name", ADMIN_ROLE_NAME).firstResult<Role>()
-      val insRole = roleRepository.find("name", INS_ROLE_NAME).firstResult<Role>()
-      val accRole = roleRepository.find("name", ACC_ROLE_NAME).firstResult<Role>()
-      val relRole = roleRepository.find("name", REL_ROLE_NAME).firstResult<Role>()
+      val adminRole = roleRepository.find("name", RoleName.ADMINISTRATEUR).firstResult<Role>()
+      val insRole = roleRepository.find("name", RoleName.CONSEILLER_INSERTION).firstResult<Role>()
+      val accRole = roleRepository.find("name", RoleName.AGENT_ACCUEIL).firstResult<Role>()
+      val relRole = roleRepository.find("name", RoleName.RESPONSABLE_RELATION_PRO).firstResult<Role>()
 
       val admin = User().apply {
         username = "admin_user"

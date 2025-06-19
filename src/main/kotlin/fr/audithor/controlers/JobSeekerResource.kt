@@ -16,7 +16,7 @@ import model.JobSeeker
 class JobSeekerResource(private val jobSeekerService: JobSeekerService) {
 
   @GET
-  @RolesAllowed("Administrateur", "Conseiller Insertion", "Agent Accueil", "Responsable Relation Pro")
+  @RolesAllowed("ADMINISTRATEUR", "CONSEILLER_INSERTION", "AGENT_ACCUEIL", "RESPONSABLE_RELATION_PRO")
   @Produces(MediaType.APPLICATION_JSON)
   fun getAllLazy(@QueryParam("page") page: Int, @QueryParam("size") size: Int): Response {
     val jobSeekersDto = jobSeekerService.getAllLazy(page, size)
@@ -25,7 +25,7 @@ class JobSeekerResource(private val jobSeekerService: JobSeekerService) {
 
   @GET
   @Path("/{jobSeekerId}")
-  @RolesAllowed("Administrateur", "Conseiller Insertion", "Agent Accueil", "Responsable Relation Pro")
+  @RolesAllowed("ADMINISTRATEUR", "CONSEILLER_INSERTION", "AGENT_ACCUEIL", "RESPONSABLE_RELATION_PRO")
   @Produces(MediaType.APPLICATION_JSON)
   fun getJobSeeker(@PathParam("jobSeekerId") id: Long): Response {
     val jobSeeker: JobSeeker = jobSeekerService.getJobSeekerById(id)

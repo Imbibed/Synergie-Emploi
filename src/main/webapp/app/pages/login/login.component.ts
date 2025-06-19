@@ -30,13 +30,13 @@ export class LoginComponent {
 
 
   onSubmitLogin() {
-    console.log(this.loginForm.value);
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
           //this.authService.setToken(token.token);
           //this.toastService.addToast({message: `Bienvenue.`, type: 'success'});
-          this.router.navigate(['home']).then();
+          console.log('before navigate');
+          this.router.navigate(['']).then();
         },
         error: err => {
           //this.toastService.addToast({message: err.error, type: 'error'});

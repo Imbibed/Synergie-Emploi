@@ -18,7 +18,7 @@ class LoginService(val userService: UserService) {
     val claims = Jwt.claims()
       .issuer("https://audithor.local")
       .subject(usernameAndRole.username)
-      .groups(setOf(usernameAndRole.role.name))
+      .groups(setOf(usernameAndRole.role.name.name))
       .expiresAt(Instant.now().plusSeconds(3600))
     return claims.sign()
   }

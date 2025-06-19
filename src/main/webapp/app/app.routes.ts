@@ -14,12 +14,15 @@ import { CompaniesnetworkComponent } from './pages/companiesnetwork/companiesnet
 
 //Tableau de bord
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import {authGuardFn} from "./guards/auth.guard";
 
 
 export const routes: Routes = [
   {
     path: '',
     component: MainLayout,
+    canActivate: [authGuardFn],
+    data: {roles: []},
     children: [
       { path: '', redirectTo: 'jobseeker', pathMatch: 'full' }, // page par défaut dans layout
       { path: 'dashboard', component: DashboardComponent }, //tableau de bord

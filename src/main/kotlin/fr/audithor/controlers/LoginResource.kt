@@ -13,6 +13,7 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.*
+import model.RoleName
 import org.eclipse.microprofile.jwt.JsonWebToken
 
 @Path("/api/login")
@@ -42,7 +43,7 @@ class LoginResource(val loginService: LoginService) {
   }
 
   @GET
-  @RolesAllowed("Administrateur", "Conseiller Insertion", "Agent Accueil", "Responsable Relation Pro")
+  @RolesAllowed("ADMINISTRATEUR", "CONSEILLER_INSERTION", "AGENT_ACCUEIL", "RESPONSABLE_RELATION_PRO")
   @Produces(MediaType.APPLICATION_JSON)
   fun isLogged(@Context securityContext: SecurityContext): Response {
     val principal = securityContext.userPrincipal

@@ -1,25 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { Router, RouterModule } from '@angular/router';
-import { MatTableModule } from '@angular/material/table';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCardModule } from '@angular/material/card';
-import { FormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import * as XLSX from 'xlsx';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatSort, MatSortModule} from '@angular/material/sort';
+import {Router, RouterModule} from '@angular/router';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {CommonModule} from '@angular/common';
+import {MatIconModule} from '@angular/material/icon';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatSelectModule} from '@angular/material/select';
+import {MatCardModule} from '@angular/material/card';
+import {FormsModule} from '@angular/forms';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 //import * as FileSaver from 'file-saver';
+import {JobSeeker} from './jobseeker.model';
+import {JobseekerService} from "../../services/jobseeker.service";
 import { JobSeekerModel, JobSeeker } from './jobseeker.model';
-import { JobseekerAddDialogComponent } from './jobseeker-add-dialog/jobseeker-add-dialog.component';
-
 
 @Component({
   selector: 'app-jobseeker',
@@ -49,8 +46,8 @@ import { JobseekerAddDialogComponent } from './jobseeker-add-dialog/jobseeker-ad
 export class JobseekerComponent implements OnInit {
 
 
-  displayedColumns: string[] = 
-  ['gender', 'nom', 'prenom', 'qpv', 'activity', 'dernierRdv', 
+  displayedColumns: string[] =
+  ['gender', 'nom', 'prenom', 'qpv', 'activity', 'dernierRdv',
     'licence', 'status', 'action-edit'];
   dataSource = new MatTableDataSource<JobSeeker>();
 
@@ -144,10 +141,54 @@ export class JobseekerComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private dialog: MatDialog
-  ) { }
+    private jobseekerService: JobseekerService,
+    private dialog: MatDialog) {
+  }
 
   ngOnInit() {
+    this.jobseekerService.getAllLazy({pageNumber: 0, size: 10}).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: err => console.error(err)
+    });
+
+    // Simule des données — remplace par le service back
+    this.dataSource.data = [
+      {
+        id: 1,
+        gender: 'Mme',
+        nom: 'Durand',
+        prenom: 'Sophie',
+        qpv: "oui",
+        activity: 'BTP',
+        dernierRdv: new Date(),
+        licence: 'Permis B',
+        status: 1
+      },
+      {
+        id: 2,
+        gender: 'Mme',
+        nom: 'Dupond',
+        prenom: 'Janine',
+        qpv: "oui",
+        activity: 'BTP',
+        dernierRdv: new Date(),
+        licence: 'Permis B',
+        status: 2
+      },
+      {
+        id: 3,
+        gender: 'M.',
+        nom: 'Bernard',
+        prenom: 'Robert',
+        qpv: "non",
+        activity: 'BTP',
+        dernierRdv: new Date(),
+        licence: 'Permis B',
+        status: 3
+      },
+    ];
     this.dataSource = new MatTableDataSource<JobSeeker>(this.demandeurs as JobSeeker[]);
 
     this.dataSource.filterPredicate = (data: JobSeeker, filter: string): boolean => {
