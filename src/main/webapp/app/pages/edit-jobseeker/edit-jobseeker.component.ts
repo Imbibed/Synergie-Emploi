@@ -85,6 +85,7 @@ export class JobseekerEditComponent implements OnInit {
     { value: 'niveau-VI', label: 'Niveau VI' }
   ];
 
+  //done
   licenceTypes = [
     { value: 'AM', label: 'Permis AM - Cyclomoteur' },
     { value: 'A', label: 'Permis A - Moto' },
@@ -99,6 +100,7 @@ export class JobseekerEditComponent implements OnInit {
     { value: 'none', label: 'Sans permis' },
   ];
 
+  //done
   transportMeans = [
     { value: '', label: '' },
     { value: 'voiturePerso', label: 'Voiture perso' },

@@ -1,45 +1,50 @@
 package fr.audithor.configuration
 
-import fr.audithor.repositories.RoleRepository
+import fr.audithor.repositories.RolesRepository
 import fr.audithor.repositories.UserRepository
+import fr.audithor.repositories.staticdata.DrivingLicenceTypesRepository
+import fr.audithor.repositories.staticdata.GradesLevelsRepository
 import io.quarkus.elytron.security.common.BcryptUtil
 import io.quarkus.runtime.Startup
 import jakarta.annotation.PostConstruct
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
-import model.Role
-import model.RoleName
 import model.User
+import model.static.*
 
 @Startup
 @ApplicationScoped
 class DataInitializer(
   private val userRepository: UserRepository,
-  private val roleRepository: RoleRepository) {
+  private val rolesRepository: RolesRepository,
+  private val gradesLevelsRepository: GradesLevelsRepository,
+  private val drivingLicenceTypesRepository: DrivingLicenceTypesRepository) {
 
   @PostConstruct
   fun init() {
-    initRoles()
+    initStaticData()
     initUsers()
   }
 
   @Transactional
-  fun initRoles() {
-    if(roleRepository.count() == 0L) {
-      val roleAdmin = Role().apply {
-        name = RoleName.ADMINISTRATEUR
-      }
-      val roleIns = Role().apply {
-        name = RoleName.CONSEILLER_INSERTION
-      }
-      val roleAcc = Role().apply {
-        name = RoleName.AGENT_ACCUEIL
-      }
-      val roleRel = Role().apply {
-        name = RoleName.RESPONSABLE_RELATION_PRO
-      }
-      roleRepository.persist(roleAdmin,roleIns,roleAcc,roleRel)
-    }
+  fun initStaticData() {
+    //TODO review this algorithm by persist only the Enum static data
+    //GradesLevels
+    val gradesLvlSetDB = gradesLevelsRepository.findAll().list<GradesLevels>().toSet()
+    val gradesLvlSetEnum = GradesLevel.entries.stream().map { GradesLevels(it) }.toList().toSet()
+    (gradesLvlSetEnum - gradesLvlSetDB).takeIf { it.isNotEmpty() } ?.let { gradesLevelsRepository.persist(it) }
+
+    //DrivingLicenceTypes
+    val drivingLicenceTypeSetDB = drivingLicenceTypesRepository.findAll().list<DrivingLicenceTypes>().toSet()
+    val drivingLicenceTypeSetEnum = DrivingLicenceType.entries.stream().map { DrivingLicenceTypes(it) }.toList().toSet()
+    (drivingLicenceTypeSetEnum - drivingLicenceTypeSetDB).takeIf { it.isNotEmpty() } ?.let { drivingLicenceTypesRepository.persist(it) }
+
+    //Roles
+    val rolesSetDB = rolesRepository.findAll().list<Roles>().toSet()
+    val rolesSetEnum = Role.entries.stream().map {Roles(it)}.toList().toSet()
+    (rolesSetEnum - rolesSetDB).takeIf { it.isNotEmpty() } ?.let { rolesRepository.persist(it) }
+
+    //TODO Languages and Skills
   }
 
   @Transactional
@@ -47,10 +52,10 @@ class DataInitializer(
     if (userRepository.count() == 0L) {
       val hashedPassword = BcryptUtil.bcryptHash("test")
 
-      val adminRole = roleRepository.find("name", RoleName.ADMINISTRATEUR).firstResult<Role>()
-      val insRole = roleRepository.find("name", RoleName.CONSEILLER_INSERTION).firstResult<Role>()
-      val accRole = roleRepository.find("name", RoleName.AGENT_ACCUEIL).firstResult<Role>()
-      val relRole = roleRepository.find("name", RoleName.RESPONSABLE_RELATION_PRO).firstResult<Role>()
+      val adminRole = rolesRepository.find("name", Role.ADMINISTRATEUR.name).firstResult<Roles>()
+      val insRole = rolesRepository.find("name", Role.CONSEILLER_INSERTION.name).firstResult<Roles>()
+      val accRole = rolesRepository.find("name", Role.AGENT_ACCUEIL.name).firstResult<Roles>()
+      val relRole = rolesRepository.find("name", Role.RESPONSABLE_RELATION_PRO.name).firstResult<Roles>()
 
       val admin = User().apply {
         username = "admin_user"

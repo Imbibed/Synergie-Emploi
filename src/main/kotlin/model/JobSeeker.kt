@@ -2,9 +2,7 @@ package model
 
 import fr.audithor.dto.JobSeekerDto
 import io.quarkus.hibernate.orm.panache.PanacheEntity
-import jakarta.persistence.Entity
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToOne
+import jakarta.persistence.*
 import java.time.LocalDate
 @Entity
 class JobSeeker : PanacheEntity() {
@@ -14,11 +12,25 @@ class JobSeeker : PanacheEntity() {
   lateinit var person: Person
   lateinit var email: String
   lateinit var registrationDate: LocalDate
+  @Enumerated(EnumType.STRING)
   lateinit var status: JobSeekerStatus
   var rgpdConsent: Boolean = false
+  @Enumerated(EnumType.STRING)
+  lateinit var licence: Licence
+  @OneToMany(mappedBy = "jobSeeker", cascade = [CascadeType.ALL], orphanRemoval = true)
+  lateinit var activies: MutableList<JobSeekerActivity>
+  @OneToMany(mappedBy = "jobSeeker", cascade = [CascadeType.ALL], orphanRemoval = true)
+  lateinit var events: MutableList<JobSeekerEvent>
 }
 
 enum class JobSeekerStatus{
-  ACTIF,
-  INACTIF
+  SANS_EMPLOI,
+  INCOONU,
+  SOUS_CONTRAT
+}
+
+enum class Licence {
+  PERMIS_A,
+  PERMIS_B,
+  PERMIS_C,
 }

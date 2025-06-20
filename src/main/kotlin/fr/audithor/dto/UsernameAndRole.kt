@@ -1,6 +1,6 @@
 package fr.audithor.dto
 
-import model.Role
+import model.static.Roles
 
-data class UsernameAndRole(val username: String, val role: Role) {
+data class UsernameAndRole(val username: String, val role: Roles) {
 }

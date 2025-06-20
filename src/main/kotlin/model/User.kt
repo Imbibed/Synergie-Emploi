@@ -6,6 +6,7 @@ import io.quarkus.security.jpa.Username
 import jakarta.persistence.Entity
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import model.static.Roles
 
 @Entity
 class User : PanacheEntity() {
@@ -18,6 +19,6 @@ class User : PanacheEntity() {
 
   @ManyToOne
   @JoinColumn(name = "role_id", nullable = false)
-  lateinit var role: Role
+  lateinit var role: Roles
 
 }
