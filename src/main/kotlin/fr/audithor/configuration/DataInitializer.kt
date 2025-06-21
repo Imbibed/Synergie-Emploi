@@ -5,12 +5,15 @@ import fr.audithor.repositories.UserRepository
 import fr.audithor.repositories.staticdata.DrivingLicenceTypesRepository
 import fr.audithor.repositories.staticdata.GradesLevelsRepository
 import io.quarkus.elytron.security.common.BcryptUtil
+import io.quarkus.hibernate.orm.panache.PanacheEntity
+import io.quarkus.hibernate.orm.panache.PanacheRepository
 import io.quarkus.runtime.Startup
 import jakarta.annotation.PostConstruct
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
 import model.User
 import model.static.*
+import kotlin.enums.EnumEntries
 
 @Startup
 @ApplicationScoped
@@ -26,23 +29,44 @@ class DataInitializer(
     initUsers()
   }
 
+  fun <E : PanacheEntity, T : Enum<T>> insertMissingStaticData(
+    existingNames: Set<String>,
+    allEnum: EnumEntries<T>,
+    entityFactory: (T) -> E,
+    repository: PanacheRepository<E>
+  ) {
+    val toInsert = allEnum.filter { it.name !in existingNames }.map { entityFactory(it) }
+    if (toInsert.isNotEmpty()) {
+      repository.persist(toInsert)
+    }
+  }
+
+
   @Transactional
   fun initStaticData() {
-    //TODO review this algorithm by persist only the Enum static data
     //GradesLevels
-    val gradesLvlSetDB = gradesLevelsRepository.findAll().list<GradesLevels>().toSet()
-    val gradesLvlSetEnum = GradesLevel.entries.stream().map { GradesLevels(it) }.toList().toSet()
-    (gradesLvlSetEnum - gradesLvlSetDB).takeIf { it.isNotEmpty() } ?.let { gradesLevelsRepository.persist(it) }
+    insertMissingStaticData(
+      gradesLevelsRepository.findAll().list<GradesLevels>().toList().map{ it.name }.toSet(),
+      GradesLevel.entries,
+      { GradesLevels(it) },
+      gradesLevelsRepository
+    )
 
     //DrivingLicenceTypes
-    val drivingLicenceTypeSetDB = drivingLicenceTypesRepository.findAll().list<DrivingLicenceTypes>().toSet()
-    val drivingLicenceTypeSetEnum = DrivingLicenceType.entries.stream().map { DrivingLicenceTypes(it) }.toList().toSet()
-    (drivingLicenceTypeSetEnum - drivingLicenceTypeSetDB).takeIf { it.isNotEmpty() } ?.let { drivingLicenceTypesRepository.persist(it) }
+    insertMissingStaticData(
+      drivingLicenceTypesRepository.findAll().list<DrivingLicenceTypes>().toList().map{ it.name }.toSet(),
+      DrivingLicenceType.entries,
+      { DrivingLicenceTypes(it) },
+      drivingLicenceTypesRepository
+    )
 
     //Roles
-    val rolesSetDB = rolesRepository.findAll().list<Roles>().toSet()
-    val rolesSetEnum = Role.entries.stream().map {Roles(it)}.toList().toSet()
-    (rolesSetEnum - rolesSetDB).takeIf { it.isNotEmpty() } ?.let { rolesRepository.persist(it) }
+    insertMissingStaticData(
+      rolesRepository.findAll().list<Roles>().toList().map{ it.name }.toSet(),
+      Role.entries,
+      { Roles(it) },
+      rolesRepository
+    )
 
     //TODO Languages and Skills
   }

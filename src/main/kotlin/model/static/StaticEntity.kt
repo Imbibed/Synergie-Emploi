@@ -22,4 +22,20 @@ abstract class StaticEntity<T> : PanacheEntity where T : Enum<T>, T : Describabl
     this.name = enumValue.name
     this.description = enumValue.desc
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is StaticEntity<*>) return false
+
+    if (name != other.name) return false
+    if (description != other.description) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = name.hashCode()
+    result = 31 * result + description.hashCode()
+    return result
+  }
 }
