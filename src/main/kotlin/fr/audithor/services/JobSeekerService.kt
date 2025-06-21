@@ -9,6 +9,7 @@ import model.JobSeeker
 
 @ApplicationScoped
 class JobSeekerService(private val jobSeekerRepository: JobSeekerRepository) {
+
   fun getAllLazy(page: Int, size: Int): List<JobSeekerDto> {
     val jobSeekers = jobSeekerRepository.findAll().page<JobSeeker>(Page.of(page, size)).list<JobSeeker>()
     return jobSeekers.map { DtoMapper.toDto(it) }
