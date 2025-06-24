@@ -8,9 +8,14 @@ import { JobseekerEditComponent } from './pages/edit-jobseeker/edit-jobseeker.co
 //Partenaire
 import { PartnersnetworkComponent } from './pages/partnersnetwork/partnersnetwork.component';
 import { EditPartnerComponent } from './pages/edit-partner/edit-partner.component';
-import { AddPartnerComponent } from './pages/add-partner/add-partner.component';
+//Entreprise
+import { CompaniesnetworkComponent } from './pages/companiesnetwork/companiesnetwork.component';
+//import { EditCompanyComponent } from './pages/edit-partner/edit-partner.component';
+
 //Tableau de bord
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+
+
 export const routes: Routes = [
   {
     path: '',
@@ -20,9 +25,12 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent }, //tableau de bord
       { path: 'jobseeker', component: JobseekerComponent }, //Demandeurs d'emploi
       { path: 'jobseeker/:id', component: JobseekerEditComponent },//edition d'un demandeur d'emploi
+
       { path: 'partner', component: PartnersnetworkComponent },//Réseau partenaire
-      { path: 'add-partner', component: AddPartnerComponent },//page de création d'un nouveau partenaire
       { path: 'partner/:id', component: EditPartnerComponent },//edition d'un demandeur d'emploi
+
+      { path: 'companies', component: CompaniesnetworkComponent },//Réseau d'entreprise
+      //{ path: 'companies/:id', component: EditCompanyComponent },//edition d'une entreprise
 
     ]
   },

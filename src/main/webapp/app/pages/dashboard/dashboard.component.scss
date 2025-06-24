@@ -12,15 +12,13 @@
   gap: 48px;
   padding: 24px;
   background-color: var(--background-color);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: var(--text-color);
 }
 
 h2 {
     font-weight: 700;
     font-size: 1.75rem;
-    color: var(--text-color);
-    border-bottom: 3px solid var(--secondary-color);
+    color: #000 !important;
     padding-bottom: 0.5rem;
   }
 

@@ -17,11 +17,11 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import * as XLSX from 'xlsx';
 //import * as FileSaver from 'file-saver';
-import { PartnerModel, Partner } from './partner.model';
-import { PartnerAddDialogComponent } from '././partner-add-dialog/partner-add-dialog.component';
+import { CompanyModel, Company } from './company.model';
+import { CompanyAddDialogComponent } from '././company-add-dialog/company-add-dialog.component';
 
 @Component({
-  selector: 'app-partnersnetwork',
+  selector: 'app-companiessnetwork',
   standalone: true,
   imports: [
     CommonModule,
@@ -40,10 +40,10 @@ import { PartnerAddDialogComponent } from '././partner-add-dialog/partner-add-di
     FormsModule,
     MatDialogModule
   ],
-  templateUrl: './partnersnetwork.component.html',
-  styleUrl: './partnersnetwork.component.scss'
+  templateUrl: './companiesnetwork.component.html',
+  styleUrl: './companiesnetwork.component.scss'
 })
-export class PartnersnetworkComponent implements OnInit {
+export class CompaniesnetworkComponent implements OnInit {
   displayedColumns: string[] =
     ['entreprise', 'nomContact', 'prenomContact','activity', 'tel', 'adresse',
       'dernierRdv', 'prochainRdv', 'status', 'action-edit'
@@ -83,21 +83,20 @@ export class PartnersnetworkComponent implements OnInit {
     { value: 0, icon: 'help_outline', label: 'Inconnu', class: 'icon-default' }
   ];
 
-  partners = [
-    { id: 11, entreprise: 'Air France', nomContact: 'Girard', prenomContact: 'Lucie', activity: 'Transport aérien', tel: '0156784321', adresse: 'Paris', dernierRdv: new Date('2025-03-15'), prochainRdv: new Date('2025-07-15'), status: 'actif' },
-  { id: 12, entreprise: 'Michelin', nomContact: 'Blanc', prenomContact: 'Paul', activity: 'Pneumatiques', tel: '0167894325', adresse: 'Clermont-Ferrand', dernierRdv: new Date('2025-04-18'), prochainRdv: new Date('2025-08-20'), status: 'inactif' },
-  { id: 13, entreprise: 'Vinci', nomContact: 'Morel', prenomContact: 'Claire', activity: 'Construction', tel: '0145896321', adresse: 'Lyon', dernierRdv: new Date('2025-02-28'), prochainRdv: new Date('2025-06-30'), status: 'actif' },
-  { id: 14, entreprise: 'EDF', nomContact: 'Dubois', prenomContact: 'Marc', activity: 'Énergie', tel: '0178564329', adresse: 'Paris', dernierRdv: new Date('2025-05-05'), prochainRdv: new Date('2025-09-10'), status: 'actif' },
-  { id: 15, entreprise: 'Orange', nomContact: 'Lemoine', prenomContact: 'Sophie', activity: 'Télécommunications', tel: '0132567894', adresse: 'Nantes', dernierRdv: new Date('2025-03-12'), prochainRdv: new Date('2025-07-22'), status: 'inactif' },
-  { id: 16, entreprise: 'Saint-Gobain', nomContact: 'Faure', prenomContact: 'Antoine', activity: 'Matériaux', tel: '0189745632', adresse: 'Rouen', dernierRdv: new Date('2025-04-22'), prochainRdv: new Date('2025-08-15'), status: 'actif' },
-  { id: 17, entreprise: 'Dassault', nomContact: 'Mercier', prenomContact: 'Isabelle', activity: 'Aéronautique', tel: '0198745632', adresse: 'Bordeaux', dernierRdv: new Date('2025-02-10'), prochainRdv: new Date('2025-06-25'), status: 'actif' },
-  { id: 18, entreprise: 'CNP Assurances', nomContact: 'Perrin', prenomContact: 'David', activity: 'Assurances', tel: '0154879632', adresse: 'Paris', dernierRdv: new Date('2025-01-30'), prochainRdv: new Date('2025-05-15'), status: 'inactif' },
-  { id: 19, entreprise: 'Bouygues', nomContact: 'Renaud', prenomContact: 'Emma', activity: 'Construction', tel: '0147856329', adresse: 'Lille', dernierRdv: new Date('2025-03-05'), prochainRdv: new Date('2025-07-01'), status: 'actif' },
-  { id: 20, entreprise: 'Alstom', nomContact: 'Colin', prenomContact: 'Julien', activity: 'Transport ferroviaire', tel: '0169857412', adresse: 'Strasbourg', dernierRdv: new Date('2025-02-18'), prochainRdv: new Date('2025-06-20'), status: 'actif' },
-
+  companies = [
+     { id: 1, entreprise: 'Total', nomContact: 'Ladal', prenomContact: 'Pascal', activity: 'Chimie', tel: '0123456789', adresse: 'Paris', dernierRdv: new Date('2025-05-01'), prochainRdv: new Date('2025-07-01'), status: 'actif' },
+  { id: 2, entreprise: 'L’Oréal', nomContact: 'Dupont', prenomContact: 'Claire', activity: 'Cosmétique', tel: '0147852369', adresse: 'Lyon', dernierRdv: new Date('2025-04-20'), prochainRdv: new Date('2025-06-15'), status: 'inactif' },
+  { id: 3, entreprise: 'Renault', nomContact: 'Martin', prenomContact: 'Julien', activity: 'Automobile', tel: '0169852374', adresse: 'Toulouse', dernierRdv: new Date('2025-03-10'), prochainRdv: new Date('2025-08-05'), status: 'actif' },
+  { id: 4, entreprise: 'Airbus', nomContact: 'Bernard', prenomContact: 'Sophie', activity: 'Aéronautique', tel: '0198745632', adresse: 'Bordeaux', dernierRdv: new Date('2025-02-25'), prochainRdv: new Date('2025-07-20'), status: 'actif' },
+  { id: 5, entreprise: 'Danone', nomContact: 'Petit', prenomContact: 'Antoine', activity: 'Agroalimentaire', tel: '0178529630', adresse: 'Marseille', dernierRdv: new Date('2025-01-15'), prochainRdv: new Date('2025-06-30'), status: 'inactif' },
+  { id: 6, entreprise: 'Veolia', nomContact: 'Moreau', prenomContact: 'Isabelle', activity: 'Environnement', tel: '0187456321', adresse: 'Nantes', dernierRdv: new Date('2025-04-01'), prochainRdv: new Date('2025-08-10'), status: 'actif' },
+  { id: 7, entreprise: 'Capgemini', nomContact: 'Laurent', prenomContact: 'David', activity: 'Informatique', tel: '0158741236', adresse: 'Paris', dernierRdv: new Date('2025-03-22'), prochainRdv: new Date('2025-07-25'), status: 'actif' },
+  { id: 8, entreprise: 'BNP Paribas', nomContact: 'Michel', prenomContact: 'Emma', activity: 'Banque', tel: '0132569874', adresse: 'Lille', dernierRdv: new Date('2025-05-10'), prochainRdv: new Date('2025-09-01'), status: 'inactif' },
+  { id: 9, entreprise: 'Schneider Electric', nomContact: 'Rousseau', prenomContact: 'Marc', activity: 'Énergie', tel: '0147859632', adresse: 'Strasbourg', dernierRdv: new Date('2025-02-05'), prochainRdv: new Date('2025-06-05'), status: 'actif' },
+  { id: 10, entreprise: 'SNCF', nomContact: 'Fournier', prenomContact: 'Julie', activity: 'Transport', tel: '0198741256', adresse: 'Paris', dernierRdv: new Date('2025-01-20'), prochainRdv: new Date('2025-05-30'), status: 'actif' },
   ];
 
-  newPartner: Partner = new PartnerModel();
+  newcompany: Company = new CompanyModel();
 
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -108,9 +107,9 @@ export class PartnersnetworkComponent implements OnInit {
     private dialog: MatDialog) { }
 
   ngOnInit() {
-     this.dataSource = new MatTableDataSource<Partner>(this.partners as Partner[]);
+     this.dataSource = new MatTableDataSource<Company>(this.companies as Company[]);
     
-        this.dataSource.filterPredicate = (data: Partner, filter: string): boolean => {
+        this.dataSource.filterPredicate = (data: Company, filter: string): boolean => {
           const search = JSON.parse(filter);
     
           const matchesText =
@@ -191,31 +190,31 @@ export class PartnersnetworkComponent implements OnInit {
   }
 
   openEdit(row: any) {
-    this.router.navigate(['partner', row.id]);
+    this.router.navigate(['companies', row.id]);
   }
 
   /* GESTION DE L'AJOUT D'UN JOBSEEKER  */
 
   openAddDialog() {
-    const dialogRef = this.dialog.open(PartnerAddDialogComponent, {
+    const dialogRef = this.dialog.open(CompanyAddDialogComponent, {
       width: '400px',
     });
 
-    dialogRef.afterClosed().subscribe((result: Partner | undefined) => {
+    dialogRef.afterClosed().subscribe((result: Company | undefined) => {
       if (result) {
-        this.onAddJobPartner(result);
+        this.onAddJobcompanies(result);
       }
     });
   }
 
-  onAddJobPartner(newPartner: Partner): void {
-    const safePartner = {
-      ...newPartner,
-      dernierRdv: newPartner.dernierRdv ?? new Date(),
-      prochainRdv:newPartner.prochainRdv ?? new Date()
+  onAddJobcompanies(newcompanies: Company): void {
+    const safecompanies = {
+      ...newcompanies,
+      dernierRdv: newcompanies.dernierRdv ?? new Date(),
+      prochainRdv:newcompanies.prochainRdv ?? new Date()
     };
-    this.partners.push(safePartner);
-    this.dataSource.data = [...this.partners];
+    this.companies.push(safecompanies);
+    this.dataSource.data = [...this.companies];
   }
 
   deleteRow(row: any) {

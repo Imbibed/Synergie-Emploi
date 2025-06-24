@@ -9,13 +9,16 @@
 
     <mat-nav-list mode="over" #drawer>
       <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
-         <mat-icon>dashboard</mat-icon>
+        <mat-icon>dashboard</mat-icon>
       </a>
-      <a mat-list-item routerLink="/jobseeker" routerLinkActive="active-link" >
-          <mat-icon>accessibility_new</mat-icon>
+      <a mat-list-item routerLink="/jobseeker" routerLinkActive="active-link">
+        <mat-icon>accessibility_new</mat-icon>
       </a>
       <a mat-list-item routerLink="/partner" routerLinkActive="active-link">
-          <mat-icon>work</mat-icon>
+        <mat-icon>work</mat-icon>
+      </a>
+      <a mat-list-item routerLink="/companies" routerLinkActive="active-link">
+        <mat-icon>domain</mat-icon>
       </a>
     </mat-nav-list>
 
@@ -34,7 +37,30 @@
 
       <span class="spacer"></span>
 
-      <button mat-button class="logoutBtn"  (click)="logout()">Déconnexion</button>
+      <button mat-button [matMenuTriggerFor]="menu">
+        <mat-icon>account_circle</mat-icon>
+        Mon compte
+      </button>
+
+      <!-- Menu déroulant -->
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="openSettings()">
+          <mat-icon>settings</mat-icon>
+          <span>Paramètres</span>
+        </button>
+
+        <button mat-menu-item (click)="openAbout()">
+          <mat-icon>info</mat-icon>
+          <span>À propos</span>
+        </button>
+
+        <mat-divider></mat-divider>
+
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Se déconnecter</span>
+        </button>
+      </mat-menu>
     </mat-toolbar>
 
     <!-- Ici le contenu principal (router outlet, etc) -->

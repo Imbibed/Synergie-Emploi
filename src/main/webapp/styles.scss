@@ -45,7 +45,6 @@
   }
 }
 
-
 $primary-color: #247f9a;
 $secondary-color: #84D1C7;
 $text-color: #333;
@@ -63,11 +62,68 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+//== GESTION DU SNACK BAR ==//
+.mat-snack-bar-container.success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 8px;
+
+  .mat-snack-bar-container.mat-simple-snackbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mat-snack-bar-container.success-snackbar .mat-simple-snackbar-action {
+    color: #ffffff !important;
+  }
+}
+
+.mat-snack-bar-container.error-snackbar {
+  background-color: #e53935 !important;
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 8px;
+
+  .mat-snack-bar-container.mat-simple-snackbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mat-snack-bar-container.mat-simple-snackbar-action {
+    color: #ffffff !important;
+  }
+}
+
 .workplace {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   padding: 1.5rem;
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem; // légèrement plus grand pour une meilleure lisibilité
+    font-weight: 500; // semi-bold pour l'élégance
+    gap: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    color: $text-color; // laisse ta variable si elle est bien définie
+    border-left: 4px solid $primary-color; // petit accent de couleur pour la visibilité
+    background-color: white; // fond très léger pour détacher du reste
+    border-radius: 4px 0 0 4px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+
+    mat-icon {
+      font-size: 1.6rem;
+      color: $primary-color;
+    }
+  }
 
   // === BANDEAU PROFIL === //
   .profile-header {
@@ -168,44 +224,37 @@ body {
           }
         }
 
-        .tool-section.is-sticky {
-          position: sticky;
-          top: 0;
-          z-index: 10;
-          background-color: white;
-          padding: 1rem 0;
-          border-bottom: 1px solid #ddd;
-        }
-
-        button,
-        .rdv-button,
-        .upload-button {
+        .tool-right {
           display: flex;
-          align-items: end;
           gap: 8px;
-          padding: 10px;
-          font-size: 17px;
-          border-radius: 8px;
-          text-transform: none;
-          color: white;
-          background-color: $primary-color !important;
-          box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-          transition: background-color 0.3s ease, box-shadow 0.3s ease;
-          min-width: 150px;
+
+          button {
+            display: flex;
+            align-items: end;
+            padding: 10px;
+            font-size: 17px;
+            border-radius: 8px;
+            text-transform: none;
+            color: white;
+            background-color: $primary-color !important;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            min-width: 150px;
 
 
-          mat-icon {
-            font-size: 20px;
+            mat-icon {
+              font-size: 20px;
+            }
+
+            &:hover {
+              background-color: darken($primary-color, 5%);
+              box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            }
           }
 
-          &:hover {
-            background-color: darken($primary-color, 5%);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+          input[type='file'] {
+            display: none;
           }
-        }
-
-        input[type='file'] {
-          display: none;
         }
       }
     }
@@ -214,7 +263,10 @@ body {
   // === DEUX COLONNES PRINCIPALES === //
   .main-columns {
     display: flex;
-    gap: 2rem;
+    align-items: flex-start;
+    gap: 24px;
+    position: relative;
+
 
     // FORMULAIRE À GAUCHE
     .edit-column {
@@ -222,20 +274,57 @@ body {
       display: flex;
       flex-direction: column;
       gap: 2rem;
+      min-width: 0;
+
+
 
       .form-card {
         margin-bottom: 24px;
 
         mat-card-title {
-          font-weight: bold;
-          font-size: 1.2rem;
+          display: flex;
           align-items: center;
+          font-size: 1.2rem;
           gap: 8px;
           padding-left: 16px;
           margin-bottom: 16px;
           color: $text-color;
+
+          mat-icon {
+            font-size: 24px; // ou 20px si trop grand
+            vertical-align: middle; // facultatif mais utile dans certains cas
+          }
         }
 
+        .clickable-title {
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        mat-card-content.collapsed {
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition: all 300ms ease;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+
+        mat-card-content.expanded {
+          max-height: 1000px;
+          opacity: 1;
+          padding: 16px;
+        }
+
+        mat-card-content {
+          overflow: hidden;
+          transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+          max-height: 1000px; // une hauteur suffisamment grande
+          opacity: 1;
+          padding: 16px;
+        }
 
         mat-card-content {
           display: flex;
@@ -271,44 +360,49 @@ body {
         }
 
         &.form-card--complex-6 {
-          mat-card-content {
+          .experience-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); // 3 colonnes égales
-            grid-gap: 16px;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 8px;
+            margin-bottom: 12px; // espace entre les groupes
+            border-bottom: 2px solid $secondary-color;
+            padding-top: 16px;
 
-            // Ligne 1 (3 inputs)
             .item-entreprise {
-              grid-column: 1 / 2;
+              grid-column: 1 / 4;
               grid-row: 1;
-            }
 
-            .item-total {
-              grid-column: 2 / 3;
-              grid-row: 1;
             }
 
             .item-debut {
-              grid-column: 3 / 4;
-              grid-row: 1;
+              grid-column: 1 / 1;
+              grid-row: 2;
             }
 
-            // Ligne 2 (2 inputs)
             .item-fin {
-              grid-column: 1 / 2;
+              grid-column: 2 / 2;
               grid-row: 2;
             }
 
             .item-competence {
-              grid-column: 2 / 4; // occupe 2 colonnes
-              grid-row: 2;
+              grid-column: 1 / 1;
+              grid-row: 3;
             }
 
-            // Ligne 3 (bouton)
-            .item-bouton {
-              grid-column: 3 / 4; // dernière colonne
-              grid-row: 3;
-              justify-self: end; // bouton aligné à droite
+            .item-description {
+              grid-column: 1 / 4;
+              grid-row: 4;
+            }
+
+            .item-bouton-del {
+              grid-column: 3 / 4;
+              grid-row: 5;
+              justify-self: end;
               margin-top: 8px;
+            }
+
+            .item-bouton-add {
+              text-align: right;
             }
 
             mat-form-field {
@@ -357,6 +451,19 @@ body {
           }
         }
 
+        &.editing-mode {
+          border-left: 4px solid #F06292;
+          padding-left: 1rem;
+          /* pour ne pas coller le contenu au bord */
+        }
+
+        .search-input {
+          width: 100%;
+          padding: 8px;
+          box-sizing: border-box;
+          border: none;
+          outline: none;
+        }
       }
 
 
@@ -420,14 +527,46 @@ body {
       }
     }
 
+    .toggle-handle {
+      width: 40px;
+      height: 40px;
+      background-color: $primary-color;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        color: white;
+        font-size: 24px;
+      }
+
+      &:hover {
+        background-color: darken($primary-color, 5%);
+      }
+    }
+
     // CVMAKER À DROITE
     .cv-column {
-      flex: 1.5;
-      background-color: $background-color;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      padding: 2rem;
-      height: fit-content;
+      width: 800px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      background-color: #f9f9f9;
+      border-left: 1px solid #ccc;
+      padding: 16px;
+      overflow-y: auto;
+
+      &.hidden {
+        transform: translateX(100%);
+        opacity: 0;
+        pointer-events: none;
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+      }
 
       .cv-container {
         display: flex;
@@ -436,7 +575,7 @@ body {
         max-width: 800px;
         margin: auto;
         padding: 20px;
-        background: $background-color;
+        background: white;
         border-radius: $border-radius;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
@@ -469,9 +608,10 @@ body {
         .cv-section {
           margin-top: 20px;
           padding: 15px;
-          background: $background-color;
+          background: white;
           border-radius: $border-radius;
           color: $primary-color;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 
 
           h3 {
@@ -525,6 +665,38 @@ body {
     margin: 60px;
   }
 
+
+
+  /*BOUTON OUTIL TABLEAU*/
+  .tool-table-section {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+
+    // pour ajouter une ligne à côté, on pourrait avoir un conteneur flex qui répartit
+    &.with-sidebar {
+      justify-content: space-between;
+    }
+
+    .bouton-menu {
+      align-items: center;
+      gap: 8px;
+      border: none !important;
+      background-color: white !important;
+      text-decoration: none !important;
+      margin-right: 16px;
+      padding: 10px;
+      font-size: 17px;
+      border-radius: 8px;
+      text-transform: none;
+      color: $primary-color;
+      cursor: pointer;
+
+      mat-icon {
+        font-size: 30px;
+      }
+    }
+  }
 
   /*=== Gestion des tableau ===*/
   table.mat-elevation-z8 {
@@ -596,7 +768,6 @@ body {
       }
     }
 
-
     tr:hover {
       background-color: $background-color;
       cursor: pointer;
@@ -604,30 +775,59 @@ body {
     }
   }
 
-  /* Badges de statut */
-  /*.badge-status {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 16px;
-    color: $text-color;
-    min-width: 100px;
-    text-align: center;
-    text-transform: uppercase;
+  /*=== Gestion des filtres de tableau===*/
+  .filters-wrapper {
+    padding: 8px 0 8px;
+    border-bottom: 1px solid #ddd;
+  }
 
-   /* &--1 {
-      background-color: $warning-color;
+  .filters-container {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    padding-bottom: 8px;
+  }
+
+  .filter-field {
+    min-width: 120px;
+    max-width: 150px;
+    flex-shrink: 0;
+
+    &.small {
+      min-width: 80px;
+      max-width: 100px;
     }
 
-    &--2 {
-      background-color: $success-color;
+    &.large {
+      min-width: 180px;
+      max-width: 220px;
     }
 
-    &--3 {
-      background-color: $stable-color;
+    // Champs plus compacts
+    .mat-form-field-wrapper {
+      padding-top: 8px;
+      padding-bottom: 4px;
     }
 
+    .mat-form-field-label {
+      white-space: nowrap;
+    }
 
-  }*/
+    .mat-form-field-flex {
+      min-height: 42px;
+      font-size: 0.9rem;
+    }
+  }
+
+  .search-field {
+    width: 100%;
+    margin-top: 8px;
+
+    .mat-form-field-flex {
+      height: 40px;
+    }
+  }
 
   /* Responsive : table compacte */
   @media (max-width: 768px) {
@@ -639,6 +839,7 @@ body {
         padding: 10px 12px;
       }
     }
+
 
     .badge-status {
       min-width: unset;
@@ -681,13 +882,6 @@ body {
     background-color: darken($warning-color, 5%) !important;
   }
 
-  /*SURCHAGE*/
-  ::ng-deep .mat-paginator {
-    font-size: 0.85rem;
-    background-color: $background-color;
-    border-radius: 0 0 12px 12px;
-  }
-
   /* === Carte Leaflet === */
   .map-wrapper {
     width: 100%;
@@ -695,7 +889,6 @@ body {
 
   /*=== Gestion du leaflet ===*/
   .map-container {
-    width: 100%;
     height: 400px; // Hauteur fixe, à ajuster si besoin
     margin-bottom: 12px;
     border-radius: 8px; // Coins arrondis optionnels
@@ -710,8 +903,9 @@ body {
 
   .coordinate-field {
     flex: 1 1 200px; // minimum 200px, s’étire si possible
-    min-width: 120px;
+    min-width: 400px;
   }
+
 
 
   // === RESPONSIVE === //
@@ -739,7 +933,36 @@ body {
       .tool-section {
         flex-direction: column;
         gap: 0.5rem;
+
+        mat-slide-toggle {
+          font-weight: 600;
+          font-size: 1rem;
+
+          /* .mat-slide-toggle-bar {
+            background-color: #1976d2 !important; // couleur du track quand activé (bleu primaire)
+          }*/
+
+          &.mat-checked .mat-slide-toggle-thumb {
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+          }
+
+          .mat-slide-toggle-label {
+            user-select: none;
+          }
+        }
       }
+
     }
+
   }
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }

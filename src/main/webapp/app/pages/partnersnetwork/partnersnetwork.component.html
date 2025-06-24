@@ -1,108 +1,154 @@
 <div class="workplace">
+  <mat-card-title>Votre réseau partenaires</mat-card-title>
+  <mat-card>
+    <mat-card-content>
+      <!-- FILTRES -->
+      <div class="filters-wrapper">
+        <div class="filters-container">
+          
 
-<div class="titlePage">Votre réseau partenaires</div>
+          <mat-form-field appearance="outline" class="filter-field large">
+            <mat-label>Secteur d'activité</mat-label>
+            <mat-select [(value)]="filterActivity" (selectionChange)="applyFilter()">
+              <mat-option value="">Tous</mat-option>
+              <mat-option *ngFor="let sector of sectors" [value]="sector">{{ sector }}</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-<!-- Barre de recherche -->
-<mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
-  <mat-label>Recherche</mat-label>
-  <input matInput (keyup)="applyFilter($event)" placeholder="Rechercher un demandeur...">
-</mat-form-field>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Statut</mat-label>
+            <mat-select [(value)]="filterStatus" (selectionChange)="applyFilter()">
+              <mat-option value="">Tous</mat-option>
+              <mat-option *ngFor="let status of statuses" [value]="status.value">{{ status.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Barre de recherche -->
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Recherche</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Rechercher un demandeur...">
+        </mat-form-field>
+
+        <div class="tool-table-section with-sidebar">
+          <div class="tools-left">
+            <button class="bouton-menu" mat-button [matMenuTriggerFor]="columnsMenu" aria-label="Choisir colonnes">
+              <mat-icon>view_column</mat-icon>
+            </button>
+
+            <mat-menu #columnsMenu="matMenu">
+              <mat-checkbox *ngFor="let col of allColumns" [checked]="displayedColumns.includes(col.key)"
+                (click)="$event.stopPropagation()" (change)="toggleColumn(col.key, $event.checked)">
+                {{ col.label }}
+              </mat-checkbox>
+            </mat-menu>
+
+            <button class="bouton-menu" mat-button aria-label="Export du tableau" (click)="exporterVersExcel()">
+              <mat-icon>download</mat-icon>
+            </button>
+          </div>
+
+          <div class="tools-right">
+            <button class="bouton-menu" mat-button aria-label="Ajouter un demandeur" (click)="openAddDialog()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
 
-<!--Tableau du réseau partenaire-->
+  <!--Tableau du réseau partenaire-->
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
-
-  <!-- Colonne Sélection -->
-  <ng-container matColumnDef="select">
-    <th mat-header-cell *matHeaderCellDef>
-      <mat-checkbox (change)="masterToggle()" [checked]="isAllSelected()" [indeterminate]="isSomeSelected()"></mat-checkbox>
-    </th>
-        <td mat-cell *matCellDef="let row">
-          <mat-checkbox
-          (click)="$event.stopPropagation()" 
-          (change)="toggleSelection(row)"
-          [checked]="selection.has(row)"></mat-checkbox>
-        </td>
-  </ng-container>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
 
     <!-- Entreprise-->
-  <ng-container matColumnDef="entreprise">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Entreprise</th>
-    <td mat-cell *matCellDef="let element">{{ element.entreprise }}</td>
-  </ng-container>
+    <ng-container matColumnDef="entreprise">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Entreprise</th>
+      <td mat-cell *matCellDef="let element">{{ element.entreprise }}</td>
+    </ng-container>
 
-  <!-- Nom du contact-->
-  <ng-container matColumnDef="nomContact">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
-    <td mat-cell *matCellDef="let element">{{ element.nomContact }}</td>
-  </ng-container>
+    <!-- Nom du contact-->
+    <ng-container matColumnDef="nomContact">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
+      <td mat-cell *matCellDef="let element">{{ element.nomContact }}</td>
+    </ng-container>
 
-  <!-- Prénom du contact-->
-  <ng-container matColumnDef="prenomContact">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Prénom</th>
-    <td mat-cell *matCellDef="let element">{{ element.prenomContact }}</td>
-  </ng-container>
+    <!-- Prénom du contact-->
+    <ng-container matColumnDef="prenomContact">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Prénom</th>
+      <td mat-cell *matCellDef="let element">{{ element.prenomContact }}</td>
+    </ng-container>
 
-  <!-- Téléphone -->
-  <ng-container matColumnDef="tel">
-    <th mat-header-cell *matHeaderCellDef>Téléphone</th>
-    <td mat-cell *matCellDef="let element">{{ element.tel }}</td>
-  </ng-container>
+    <!-- Téléphone -->
+    <ng-container matColumnDef="tel">
+      <th mat-header-cell *matHeaderCellDef>Téléphone</th>
+      <td mat-cell *matCellDef="let element">{{ element.tel }}</td>
+    </ng-container>
 
-  <!-- Adresse -->
-  <ng-container matColumnDef="adresse">
-    <th mat-header-cell *matHeaderCellDef>Adresse</th>
-    <td mat-cell *matCellDef="let element">{{ element.adresse }}</td>
-  </ng-container>
+    <!-- Adresse -->
+    <ng-container matColumnDef="adresse">
+      <th mat-header-cell *matHeaderCellDef>Adresse</th>
+      <td mat-cell *matCellDef="let element">{{ element.adresse }}</td>
+    </ng-container>
+    
+    <ng-container matColumnDef="activity">
+      <th mat-header-cell *matHeaderCellDef>Secteur d'activité</th>
+      <td mat-cell *matCellDef="let element">{{ element.activity }}</td>
+    </ng-container>
 
-  <!-- Date dernier RDV -->
-  <ng-container matColumnDef="dernierRdv">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Date dernier RDV</th>
-    <td mat-cell *matCellDef="let element">{{ element.dernierRdv | date }}</td>
-  </ng-container>
+    <!-- Date dernier RDV -->
+    <ng-container matColumnDef="dernierRdv">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date dernier RDV</th>
+      <td mat-cell *matCellDef="let element">{{ element.dernierRdv | date }}</td>
+    </ng-container>
 
-  <!-- Date prochain RDV -->
-  <ng-container matColumnDef="prochainRdv">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Date prochain RDV</th>
-    <td mat-cell *matCellDef="let element">{{ element.prochainRdv | date }}</td>
-  </ng-container>
+    <!-- Date prochain RDV -->
+    <ng-container matColumnDef="prochainRdv">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date prochain RDV</th>
+      <td mat-cell *matCellDef="let element">{{ element.prochainRdv | date }}</td>
+    </ng-container>
 
-<!-- Statut -->
-<ng-container matColumnDef="statut">
-  <th mat-header-cell *matHeaderCellDef>Statut</th>
-  <td mat-cell *matCellDef="let element">
-    <span
-      class="badge-status"
-      [ngClass]="{
-        'badge-status--1': element.statut === 'inactif',
-        'badge-status--2': element.statut === 'actif',
-        'badge-status--3': element.statut === 'nouveau'
-      }"
-    >
-      {{ element.statut }}
-    </span>
-  </td>
-</ng-container>
+    <!-- Statut -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Statut</th>
+      <td mat-cell *matCellDef="let row">
+        <ng-container *ngIf="getStatusDisplay(row.status) as statusInfo">
+          <mat-icon [ngClass]="statusInfo.class" class="mr-1">{{ statusInfo.icon }}</mat-icon>
+          {{ statusInfo.label }}
+        </ng-container>
+      </td>
+    </ng-container>
 
-  <!-- Action -->
-  <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef>Modifier</th>
-      <td mat-cell *matCellDef="let element">
-        <button class="icon-button" (click)="openEdit(element)">
+    <ng-container matColumnDef="action-edit">
+      <th mat-header-cell *matHeaderCellDef class="action-cell"> </th>
+      <td mat-cell *matCellDef="let row" class="action-cell">
+        <button class="icon-button" [matMenuTriggerFor]="menu">
           <mat-icon>more_horiz</mat-icon>
         </button>
+
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="openEdit(row)">
+            <mat-icon>edit</mat-icon>
+            <span>Modif.</span>
+          </button>
+          <button mat-menu-item (click)="deleteRow(row)">
+            <mat-icon>delete</mat-icon>
+            <span>Supp.</span>
+          </button>
+        </mat-menu>
       </td>
-  </ng-container>
+    </ng-container>
 
-  <!-- Header et Rows -->
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelection(row)"></tr>
+    <!-- Header et Rows -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggleSelection(row)"
+      style="cursor:pointer; "> </tr>
 
-</table>
-<div class="button-container" style="text-align:center; margin-top: 16px;">
-  <button mat-raised-button class="btn-add" (click)="addPartner()">Ajouter</button>
-  <button mat-raised-button class="btn-delete" (click)="deleteSelectedRows()" [disabled]="selection.size === 0">Supprimer</button>
-</div>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons [pageSize]="10">
+  </mat-paginator>
 
 </div>
