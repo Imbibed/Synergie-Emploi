@@ -18,40 +18,42 @@
             </label>
           </div>
 
-          
+
           <div class="descriptif-upload-wrapper">
             <form [formGroup]="form" class="mainForm">
-            <div class="name-fields">
+              <div class="name-fields">
 
-              <mat-form-field appearance="fill">
-                <mat-label>Nom</mat-label>
-                <input matInput formControlName="nom">
+                <mat-form-field appearance="fill">
+                  <mat-label>Nom</mat-label>
+                  <input matInput formControlName="nom">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                  <mat-label>Prénom</mat-label>
+                  <input matInput formControlName="prenom">
+                </mat-form-field>
+              </div>
+
+              <mat-form-field appearance="outline" class="comment-section">
+                <mat-label>Descriptif</mat-label>
+                <textarea matInput rows="2" formControlName="comments"></textarea>
               </mat-form-field>
-
-              <mat-form-field appearance="fill">
-                <mat-label>Prénom</mat-label>
-                <input matInput formControlName="prenom">
-              </mat-form-field>
-            </div>
-
-            <mat-form-field appearance="outline" class="comment-section">
-              <mat-label>Descriptif</mat-label>
-              <textarea matInput rows="2" formControlName="comments"></textarea>
-            </mat-form-field>
 
             </form>
 
-            <div class="tool-section" #stickyHeader>
-              <!-- Bouton Prendre RDV -->
-              <div class="rdv-button">
+            <div class="tool-section">
+              <mat-slide-toggle [checked]="isInterviewMode" (change)="onToggleMode($event)">
+                Mode saisie
+              </mat-slide-toggle>
+              <div class="tool-right">
+                <!-- Bouton Prendre RDV -->
                 <button mat-raised-button color="primary" (click)="onNewRdv()">
                   <mat-icon>calendar_today</mat-icon>
                   Prendre RDV
                 </button>
-              </div>
 
-              <!-- Bouton Upload -->
-              <div class="upload-button">
+
+                <!-- Bouton Upload -->
                 <label>
                   <input type="file" hidden accept=".pdf,.doc,.docx" (change)="onFileUpload($event, 'cv')" />
                 </label>
@@ -73,8 +75,11 @@
     <div class="edit-column">
       <form [formGroup]="form" class="mainForm">
         <!-- Contact -->
-        <mat-card class="form-card form-card--micro-3">
-          <mat-card-title>Informations de contact</mat-card-title>
+        <mat-card class="form-card form-card--micro-3" [ngClass]="{'editing-mode': !isReadOnly}">
+          <mat-card-title>
+            <mat-icon>person</mat-icon>
+            Informations de contact
+          </mat-card-title>
           <mat-card-content>
             <mat-form-field appearance="fill">
               <mat-label>Téléphone</mat-label>
@@ -94,9 +99,12 @@
         </mat-card>
 
         <!-- Informations personnelles -->
-        <mat-card class="form-card form-card--micro-3">
-          <mat-card-title>Informations personnelles</mat-card-title>
-          <mat-card-content>
+        <mat-card class="form-card form-card--micro-3" [ngClass]="{'editing-mode': !isReadOnly}">
+          <mat-card-title (click)="isCollapsedIP = !isCollapsedIP" class="clickable-title">
+            <mat-icon>{{ isCollapsedIP ? 'lock_open' : 'lock' }}</mat-icon>
+            Informations personnelles
+          </mat-card-title>
+          <mat-card-content [class.collapsed]="isCollapsedIP">
 
             <div class="radio-group-container">
               <span class="radio-group-label">QPV</span>
@@ -126,9 +134,12 @@
         </mat-card>
 
         <!-- Informations complémentaires -->
-        <mat-card class="form-card form-card--micro-6">
-          <mat-card-title>Informations complémentaires</mat-card-title>
-          <mat-card-content>
+        <mat-card class="form-card form-card--micro-6" [ngClass]="{'editing-mode': !isReadOnly}">
+          <mat-card-title (click)="isCollapsedIC = !isCollapsedIC" class="clickable-title">
+            <mat-icon>{{ isCollapsedIC ? 'short_text' : 'notes' }}</mat-icon>
+            Informations complémentaires
+          </mat-card-title>
+          <mat-card-content [class.collapsed]="isCollapsedIC">
 
             <mat-form-field appearance="outline">
               <mat-label>Moyens de transport</mat-label>
@@ -174,6 +185,10 @@
             <mat-form-field appearance="outline">
               <mat-label>Compétences</mat-label>
               <mat-select formControlName="skill" multiple>
+                <mat-option disabled>
+                  <input type="text" placeholder="Rechercher une compétence..." [(ngModel)]="skillFilter"
+                    (ngModelChange)="filterSkills()" matInput class="search-input" />
+                </mat-option>
                 <mat-option *ngFor="let skill of skillsList" [value]="skill.value">
                   {{ skill.label }}
                 </mat-option>
@@ -184,55 +199,62 @@
         </mat-card>
 
         <!-- Suivi de carrière -->
-        <mat-card class="form-card">
-          <mat-card-title>Suivi de carrière</mat-card-title>
-          <mat-card-content>
-
-            <!-- Champ hors FormArray -->
+        <mat-card class="form-card form-card--complex-6" [ngClass]="{'editing-mode': !isReadOnly}">
+          <mat-card-title (click)="isCollapsedSC = !isCollapsedSC" class="clickable-title">
+            <mat-icon>{{ isCollapsedSC ? 'center_focus_weak' : 'center_focus_strong' }} </mat-icon>
+            Suivi de carrière
+          </mat-card-title>
+          <mat-card-content [class.collapsed]="isCollapsedSC">
+            <!-- Champ hors FormArray 
             <mat-form-field appearance="fill">
               <mat-label>Poste dernièrement occupé</mat-label>
               <input matInput formControlName="jobTitle">
-            </mat-form-field>
-
+            </mat-form-field>-->
             <!-- FormArray -->
             <div formArrayName="experiences">
-              <div *ngFor="let exp of experiencesControls; let i = index" [formGroupName]="i">
-                <mat-form-field appearance="outline">
+              <div *ngFor="let exp of experiencesControls; let i = index" [formGroupName]="i" class="experience-grid">
+                <mat-form-field class="item-entreprise" appearance="outline">
                   <mat-label>Entreprise</mat-label>
-                  <input matInput formControlName="company">
+                  <input matInput formControlName="company" />
                 </mat-form-field>
 
-                <mat-form-field appearance="outline">
+                <mat-form-field class="item-debut" appearance="outline">
                   <mat-label>Début</mat-label>
-                  <input matInput formControlName="startDate">
+                  <input matInput formControlName="startDate" />
                 </mat-form-field>
 
-                <mat-form-field appearance="outline">
+                <mat-form-field class="item-fin" appearance="outline">
                   <mat-label>Fin</mat-label>
-                  <input matInput formControlName="endDate">
+                  <input matInput formControlName="endDate" />
                 </mat-form-field>
 
-                <mat-form-field appearance="outline">
+                <mat-form-field class="item-competence" appearance="outline">
                   <mat-label>Compétence principale</mat-label>
-                  <input matInput formControlName="skills">
+                  <input matInput formControlName="skills" />
                 </mat-form-field>
 
-                <mat-form-field appearance="outline">
+                <mat-form-field class="item-description" appearance="outline">
                   <mat-label>Description</mat-label>
                   <textarea matInput formControlName="description"></textarea>
                 </mat-form-field>
 
-                <button mat-button color="warn" (click)="removeExperience(i)">Supprimer</button>
+                <button mat-button class="item-bouton-del" color="warn" (click)="removeExperience(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
               </div>
-              <button mat-button color="primary" (click)="addExperience()">Ajouter une expérience</button>
+              <button mat-button class="item-bouton-add" color="primary" (click)="addExperience()">
+                <mat-icon>add</mat-icon>
+              </button>
             </div>
           </mat-card-content>
         </mat-card>
 
         <!-- Localisation -->
-        <mat-card class="form-card">
-          <mat-card-title>Localisation</mat-card-title>
-          <mat-card-content>
+        <mat-card class="form-card form-card--micro-3" [ngClass]="{'editing-mode': !isReadOnly}">
+          <mat-card-title (click)="isCollapsedLOC = !isCollapsedLOC" class="clickable-title">
+            <mat-icon>{{ isCollapsedLOC ? 'person_pin' : 'person_pin_circle' }}</mat-icon>
+            Localisation</mat-card-title>
+          <mat-card-content [class.collapsed]="isCollapsedLOC">
 
             <mat-form-field appearance="fill">
               <mat-label>Adresse</mat-label>
@@ -240,14 +262,24 @@
             </mat-form-field>
 
             <mat-form-field appearance="fill">
+              <mat-label>Zip code</mat-label>
+              <input matInput formControlName="zipCode">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
               <mat-label>Ville</mat-label>
               <input matInput formControlName="ville">
             </mat-form-field>
 
-            <mat-form-field appearance="fill">
-              <mat-label>Zip code</mat-label>
-              <input matInput formControlName="zipCode">
-            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="form-card" [ngClass]="{'editing-mode': !isReadOnly}">
+          <mat-card-title (click)="isCollapsedMAP = !isCollapsedMAP" class="clickable-title">
+            <mat-icon>{{ isCollapsedMAP ? 'navigation' : 'near_me' }}</mat-icon>
+            Localisation
+          </mat-card-title>
+          <mat-card-content [class.collapsed]="isCollapsedMAP">
 
             <!--Carte-->
             <div class="map-wrapper">
@@ -271,9 +303,12 @@
         </mat-card>
 
         <!-- Démarches & Statut -->
-        <mat-card class="form-card">
-          <mat-card-title>Démarches & Statut</mat-card-title>
-          <mat-card-content>
+        <mat-card class="form-card form-card--micro-3" [ngClass]="{'editing-mode': !isReadOnly}">
+          <mat-card-title (click)="isCollapsedDEM = !isCollapsedDEM" class="clickable-title">
+            <mat-icon>{{ isCollapsedDEM ? 'event_available' : 'event_available' }}</mat-icon>
+            Démarches & Statut
+          </mat-card-title>
+          <mat-card-content [class.collapsed]="isCollapsedDEM">
             <mat-form-field appearance="fill">
               <mat-label>Date dernier RDV</mat-label>
               <input matInput [matDatepicker]="picker1" formControlName="dernierRdv">
@@ -301,15 +336,16 @@
         </mat-card>
 
         <!-- Boutons -->
-        <div class="button-container">
+        <div class="button-container" *ngIf="!isReadOnly">
           <button mat-raised-button class="btn-cancel" type="button" (click)="onCancel()">Annuler</button>
-          <button mat-raised-button class="btn-save" type="submit"><mat-icon>save</mat-icon>Enregistrer</button>
+          <button mat-raised-button class="btn-save" type="button" (click)="onSave()">
+            <mat-icon>save</mat-icon>Enregistrer</button>
         </div>
 
       </form>
       <!--  Historique des actions -->
       <mat-card class="history-card">
-        <mat-card-title>Historique des actions</mat-card-title>
+        <mat-card-title><mat-icon>history</mat-icon>Historique des actions</mat-card-title>
         <mat-card-content>
           <table mat-table [dataSource]="actions" class="mat-elevation-z2">
 
@@ -336,8 +372,14 @@
       </mat-card>
     </div>
 
+    <button class="toggle-handle mat-icon-button" (click)="toggleCv()">
+      <mat-icon *ngIf="isCvHidden">chevron_left</mat-icon>
+      <mat-icon *ngIf="!isCvHidden">chevron_right</mat-icon>
+    </button>
+
+
     <!-- CV maker -->
-    <div class="cv-column">
+    <div class="cv-column" [class.hidden]="isCvHidden">
       <div class="cv-container">
         <header class="cv-header">
           <h1>{{ form.get('nom')?.value }} {{ form.get('prenom')?.value }}</h1>
@@ -376,7 +418,7 @@
           </div>
         </section>
 
-         <section class="cv-section">
+        <section class="cv-section">
           <h3>Permis</h3>
           <div>
             <ul>

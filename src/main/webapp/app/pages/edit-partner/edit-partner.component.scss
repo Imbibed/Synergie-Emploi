@@ -1,0 +1,67 @@
+.timeline-container {
+  padding-left: 20px;
+  position: relative;
+}
+
+.timeline {
+  position: relative;
+  margin-left: 20px;
+  border-left: 2px solid #1976d2; /* couleur ligne verticale */
+}
+
+.timeline-item {
+  position: relative;
+  margin: 20px 0;
+  padding-left: 20px;
+}
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #1976d2;
+  border-radius: 50%;
+  position: absolute;
+  left: -7px;
+  top: 0;
+}
+
+.timeline-content {
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  color: white;
+}
+
+/* Statuts colorés adoucis */
+.status-fin {
+  background-color: #fdecea; /* Rouge pâle */
+  color: #b71c1c; /* Texte rouge foncé */
+}
+
+.status-en-cours {
+  background-color: #e8f5e9; /* Vert très clair */
+  color: #2e7d32; /* Texte vert foncé */
+}
+
+.status-en-attente {
+  background-color: #fff8e1; /* Orange pastel */
+  color: #ef6c00; /* Texte orange foncé */
+}
+
+.timeline-date, 
+.timeline-status  {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.timeline-type {
+  font-style: italic;
+  color: #666;
+}
+
+.timeline-details {
+  color: #444;
+}
+

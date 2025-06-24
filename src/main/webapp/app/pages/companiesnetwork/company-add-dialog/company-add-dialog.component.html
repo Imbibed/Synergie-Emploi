@@ -1,0 +1,31 @@
+<h2>Ajouter Entreprise</h2>
+
+<form (ngSubmit)="onSubmit()" #form="ngForm" style="display: flex; flex-direction: column; gap: 12px;">
+
+  <input name="nomContact" [(ngModel)]="newcompany.nomContact" placeholder="Nom" required autofocus />
+
+  <input name="prenomContact" [(ngModel)]="newcompany.prenomContact" placeholder="Prénom" required />
+
+  <input name="entreprise" [(ngModel)]="newcompany.entreprise" placeholder="Entreprise" />
+
+  <input name="activity" [(ngModel)]="newcompany.activity" placeholder="Secteur d'activité" />
+
+  <mat-form-field appearance="fill">
+    <mat-label>Statut</mat-label>
+    <mat-select [(ngModel)]="newcompany.status" name="status" required>
+      <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+        <mat-icon class="{{ status.class }}" [attr.aria-label]="status.label" aria-hidden="false">
+          {{ status.icon }}
+        </mat-icon>
+        {{status.label}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Ajoute d'autres champs essentiels ici -->
+
+  <div style="display: flex; justify-content: flex-end; gap: 8px;">
+    <button type="button" (click)="onCancel()">Annuler</button>
+    <button type="submit" [disabled]="form.invalid">Ajouter</button>
+  </div>
+</form>
