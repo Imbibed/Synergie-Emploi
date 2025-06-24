@@ -17,6 +17,5 @@ class JobSeekerEvent : PanacheEntity() {
 
 enum class EventType {
   PASSAGE_EN_AGENCE,
-  MISE_A_JOUR,
-  RENDEZ_VOUS
+  MISE_A_JOUR
 }

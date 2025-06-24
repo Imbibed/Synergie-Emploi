@@ -1,9 +1,10 @@
 package model
 
-import fr.audithor.dto.JobSeekerDto
 import io.quarkus.hibernate.orm.panache.PanacheEntity
 import jakarta.persistence.*
+import model.static.DrivingLicenceType
 import java.time.LocalDate
+
 @Entity
 class JobSeeker : PanacheEntity() {
 
@@ -16,21 +17,11 @@ class JobSeeker : PanacheEntity() {
   lateinit var status: JobSeekerStatus
   var rgpdConsent: Boolean = false
   @Enumerated(EnumType.STRING)
-  lateinit var licence: Licence
-  @OneToMany(mappedBy = "jobSeeker", cascade = [CascadeType.ALL], orphanRemoval = true)
-  lateinit var activies: MutableList<JobSeekerActivity>
-  @OneToMany(mappedBy = "jobSeeker", cascade = [CascadeType.ALL], orphanRemoval = true)
-  lateinit var events: MutableList<JobSeekerEvent>
+  lateinit var licence: DrivingLicenceType
 }
 
 enum class JobSeekerStatus{
   SANS_EMPLOI,
   INCOONU,
   SOUS_CONTRAT
-}
-
-enum class Licence {
-  PERMIS_A,
-  PERMIS_B,
-  PERMIS_C,
 }
