@@ -1,7 +1,7 @@
 package fr.audithor.controlers
 
 import fr.audithor.dto.Credentials
-import fr.audithor.exceptions.UserNotFoundException
+import fr.audithor.dto.exceptions.UserNotFoundException
 import fr.audithor.services.LoginService
 import jakarta.annotation.security.PermitAll
 import jakarta.annotation.security.RolesAllowed

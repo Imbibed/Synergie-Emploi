@@ -6,6 +6,7 @@ import fr.audithor.repositories.staticdata.DrivingLicenceTypesRepository
 import fr.audithor.repositories.staticdata.GradesLevelsRepository
 import io.quarkus.elytron.security.common.BcryptUtil
 import io.quarkus.hibernate.orm.panache.PanacheEntity
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase
 import io.quarkus.hibernate.orm.panache.PanacheRepository
 import io.quarkus.runtime.Startup
 import jakarta.annotation.PostConstruct
@@ -29,7 +30,7 @@ class DataInitializer(
     initUsers()
   }
 
-  fun <E : PanacheEntity, T : Enum<T>> insertMissingStaticData(
+  fun <E : PanacheEntityBase, T : Enum<T>> insertMissingStaticData(
     existingNames: Set<String>,
     allEnum: EnumEntries<T>,
     entityFactory: (T) -> E,

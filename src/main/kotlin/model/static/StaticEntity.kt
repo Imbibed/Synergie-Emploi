@@ -1,14 +1,15 @@
 package model.static
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.MappedSuperclass
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase
+import jakarta.persistence.*
 
 @MappedSuperclass
-abstract class StaticEntity<T> : PanacheEntity where T : Enum<T>, T : DescribableEnum {
+abstract class StaticEntity<T> : PanacheEntityBase where T : Enum<T>, T : DescribableEnum {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  var id: Long? = null
 
   @Column(nullable = false, unique = true)
   lateinit var name: String

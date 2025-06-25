@@ -1,4 +1,4 @@
-package fr.audithor.exceptions
+package fr.audithor.dto.exceptions
 
 import java.lang.Exception
 

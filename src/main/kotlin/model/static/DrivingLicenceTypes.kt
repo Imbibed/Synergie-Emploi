@@ -1,8 +1,10 @@
 package model.static
 
 import jakarta.persistence.Entity
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "stc_driving_licence")
 class DrivingLicenceTypes : StaticEntity<DrivingLicenceType> {
   constructor() : super()
   constructor(enumValue: DrivingLicenceType) : super(enumValue)

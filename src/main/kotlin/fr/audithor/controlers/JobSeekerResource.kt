@@ -1,5 +1,6 @@
 package fr.audithor.controlers
 
+import fr.audithor.dto.exceptions.FileEmptyException
 import fr.audithor.services.JobSeekerService
 import jakarta.annotation.security.RolesAllowed
 import jakarta.ws.rs.GET
@@ -38,5 +39,17 @@ class JobSeekerResource(private val jobSeekerService: JobSeekerService) {
   @Produces(MediaType.APPLICATION_JSON)
   fun updateJobSeeker(@PathParam("jobSeekerId") jobSeekerId: Long): Response {
     return Response.ok().build()
+  }
+
+  @GET
+  @Path("/import")
+  @Produces(MediaType.APPLICATION_JSON)
+  fun importJobSeekersFromCsv(): Response{
+    return try {
+      jobSeekerService.importJobSeekerByCsvFile()
+      Response.ok().build()
+    } catch(e: Exception) {
+      Response.serverError().entity(e.message).build()
+    }
   }
 }

@@ -1,15 +1,19 @@
 package model
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase
 import io.quarkus.security.jpa.Password
 import io.quarkus.security.jpa.Username
-import jakarta.persistence.Entity
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 import model.static.Roles
 
 @Entity
-class User : PanacheEntity() {
+@Table(name = "user")
+class User : PanacheEntityBase() {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  var id: Long? = null
 
   @Username
   lateinit var username: String

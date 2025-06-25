@@ -1,8 +1,10 @@
 package model.static
 
 import jakarta.persistence.Entity
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "stc_grades_levels")
 class GradesLevels : StaticEntity<GradesLevel> {
   constructor() : super()
   constructor(enumValue: GradesLevel) : super(enumValue)

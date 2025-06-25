@@ -14,9 +14,10 @@ import {MatCardModule} from '@angular/material/card';
 import {FormsModule} from '@angular/forms';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 //import * as FileSaver from 'file-saver';
-import {JobSeeker} from './jobseeker.model';
 import {JobseekerService} from "../../services/jobseeker.service";
 import { JobSeekerModel, JobSeeker } from './jobseeker.model';
+import {JobseekerAddDialogComponent} from "./jobseeker-add-dialog/jobseeker-add-dialog.component";
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-jobseeker',

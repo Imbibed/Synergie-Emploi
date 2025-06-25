@@ -1,6 +1,6 @@
 package fr.audithor.repositories
 
-import fr.audithor.exceptions.UserNotFoundException
+import fr.audithor.dto.exceptions.UserNotFoundException
 import io.quarkus.elytron.security.common.BcryptUtil
 import io.quarkus.hibernate.orm.panache.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
