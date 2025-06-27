@@ -10,11 +10,11 @@
       <column name="id" type="BIGINT" autoIncrement="true">
         <constraints primaryKey="true" nullable="false"/>
       </column>
-      <column name="firstname" type="VARCHAR(255)"></column>
-      <column name="lastname" type="VARCHAR(255)"></column>
-      <column name="email" type="VARCHAR(255)"></column>
-      <column name="phoneNumber" type="VARCHAR(255)"></column>
-      <column name="registrationDate" type="DATE"></column>
+      <column name="firstname" type="VARCHAR(255)"/>
+      <column name="lastname" type="VARCHAR(255)"/>
+      <column name="email" type="VARCHAR(255)"/>
+      <column name="phoneNumber" type="VARCHAR(255)"/>
+      <column name="registrationDate" type="DATE"/>
     </createTable>
 
     <createTable tableName="user">
@@ -73,4 +73,25 @@
       </column>
     </createTable>
   </changeSet>
+
+  <changeSet id="jva-27062025-01" author="jva">
+    <addColumn tableName="job_seeker">
+      <column name="gender" type="VARCHAR(20)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+    <addNotNullConstraint tableName="job_seeker" columnName="firstName" columnDataType="VARCHAR(255)"/>
+    <addNotNullConstraint tableName="job_seeker" columnName="lastName" columnDataType="VARCHAR(255)"/>
+    <addNotNullConstraint tableName="job_seeker" columnName="phoneNumber" columnDataType="VARCHAR(255)"/>
+    <addNotNullConstraint tableName="job_seeker" columnName="registrationDate" columnDataType="DATE"/>
+  </changeSet>
+
+  <changeSet id="jva-27062025-02" author="jva">
+    <addColumn tableName="job_seeker">
+      <column name="status" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
 </databaseChangeLog>

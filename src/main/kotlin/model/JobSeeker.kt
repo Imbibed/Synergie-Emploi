@@ -1,39 +1,29 @@
 package model
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase
 import jakarta.persistence.*
-import model.static.DrivingLicenceType
 import java.time.LocalDate
 
 @Entity
 @Table(name = "job_seeker")
-class JobSeeker() : PanacheEntityBase() {
-
+class JobSeeker(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  var id: Long? = null
-
-  lateinit var firstName: String
-
-  lateinit var lastName: String
-
-  lateinit var phoneNumber: String
-
-  lateinit var email: String
-
-  lateinit var registrationDate: LocalDate
-
+  var id: Long? = null,
+  var firstName: String = "",
+  var lastName: String = "",
+  var phoneNumber: String = "",
+  var email: String = "",
+  var registrationDate: LocalDate = LocalDate.now(),
   @Enumerated(EnumType.STRING)
-  lateinit var status: JobSeekerStatus
-
+  var status: JobSeekerStatus = JobSeekerStatus.INCONNU,
   @Enumerated(EnumType.STRING)
-  lateinit var gender: Gender
-}
+  var gender: Gender = Gender.FEMME
+) : PanacheEntityBase()
 
 enum class JobSeekerStatus{
   SANS_EMPLOI,
-  INCOONU,
+  INCONNU,
   SOUS_CONTRAT
 }
 

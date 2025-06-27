@@ -1,6 +1,5 @@
 package fr.audithor.services
 
-import fr.audithor.dto.DtoMapper
 import fr.audithor.dto.JobSeekerDto
 import fr.audithor.dto.exceptions.FileEmptyException
 import fr.audithor.dto.exceptions.WrongFileHeaderException
@@ -15,6 +14,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.time.LocalDate
 
 @ApplicationScoped
 class JobSeekerService(private val jobSeekerRepository: JobSeekerRepository) {
@@ -41,31 +41,32 @@ class JobSeekerService(private val jobSeekerRepository: JobSeekerRepository) {
     val inputStream = File(jobseekerImportFilePath).inputStream()
     val reader = BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8))
     val lines = reader.readLines()
-    if(lines.isEmpty()) {
+    if (lines.isEmpty()) {
       throw FileEmptyException(jobseekerImportFilePath.split("/").last())
     }
     val header = lines.first().split(",")
     val expectedHeader = jobseekerImportFilePathHeader.split(",")
-    if(header.map{it.trim()} != expectedHeader){
+    if (header.map { it.trim() } != expectedHeader) {
       throw WrongFileHeaderException(lines.first(), jobseekerImportFilePathHeader)
     }
-    val jobSeekers = lines.drop(1).map { line ->
-      val parts = line.split(",")
-      JobSeeker().apply {
-        gender = getJobSeekerGender(parts.getOrNull(0)?.trim())
-        lastName = parts.getOrNull(1)?.trim() ?: ""
-        firstName = parts.getOrNull(2)?.trim() ?: ""
-        phoneNumber = parts.getOrNull(3)?.trim() ?: ""
-        email = parts.getOrNull(4)?.trim() ?: ""
-        status = getJobSeekerStatusEnum(parts.getOrNull(5)?.trim())
-      }
+    val jobSeekers = lines.drop(1).map {
+      val parts = it.split(",")
+      JobSeeker(
+        gender = getJobSeekerGender(parts.getOrNull(0)?.trim()),
+        lastName = parts.getOrNull(1)?.trim() ?: "",
+        firstName = parts.getOrNull(2)?.trim() ?: "",
+        phoneNumber = parts.getOrNull(3)?.trim() ?: "",
+        email = parts.getOrNull(4)?.trim() ?: "",
+        status = getJobSeekerStatusEnum(parts.getOrNull(5)?.trim()),
+        registrationDate = LocalDate.now()
+      )
     }
     jobSeekerRepository.persist(jobSeekers)
   }
 
   private fun getJobSeekerGender(value: String?): Gender {
     return value?.let {
-      when(it) {
+      when (it) {
         "M." -> Gender.HOMME
         else -> Gender.FEMME
       }
@@ -73,10 +74,12 @@ class JobSeekerService(private val jobSeekerRepository: JobSeekerRepository) {
   }
 
   private fun getJobSeekerStatusEnum(value: String?): JobSeekerStatus {
-    return value?.let { when(it) {
-      "Sans Emploi" -> JobSeekerStatus.SANS_EMPLOI
-      "Sous contrat" -> JobSeekerStatus.SOUS_CONTRAT
-      else -> JobSeekerStatus.INCOONU
-    } } ?: JobSeekerStatus.INCOONU
+    return value?.let {
+      when (it) {
+        "Sans Emploi" -> JobSeekerStatus.SANS_EMPLOI
+        "Sous contrat" -> JobSeekerStatus.SOUS_CONTRAT
+        else -> JobSeekerStatus.INCONNU
+      }
+    } ?: JobSeekerStatus.INCONNU
   }
 }
