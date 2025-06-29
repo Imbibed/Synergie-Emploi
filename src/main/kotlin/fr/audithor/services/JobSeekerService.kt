@@ -1,6 +1,7 @@
 package fr.audithor.services
 
 import fr.audithor.dto.JobSeekerDto
+import fr.audithor.dto.PaginationResponse
 import fr.audithor.dto.exceptions.FileEmptyException
 import fr.audithor.dto.exceptions.WrongFileHeaderException
 import fr.audithor.repositories.JobSeekerRepository
@@ -15,6 +16,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.time.LocalDate
+import kotlin.math.ceil
 
 @ApplicationScoped
 class JobSeekerService(private val jobSeekerRepository: JobSeekerRepository) {
@@ -26,9 +28,17 @@ class JobSeekerService(private val jobSeekerRepository: JobSeekerRepository) {
   lateinit private var jobseekerImportFilePathHeader: String
 
   @Transactional
-  fun getAllLazy(page: Int, size: Int): List<JobSeekerDto> {
-    val jobSeekers = jobSeekerRepository.findAll().page<JobSeeker>(Page.of(page, size)).list<JobSeeker>()
-    return listOf()//jobSeekers.map { DtoMapper.toDto(it) }
+  fun getAllLazy(pageIndex: Int, size: Int): PaginationResponse<JobSeekerDto> {
+    val jobSeekers = jobSeekerRepository.findAll().page<JobSeeker>(Page.of(pageIndex, size)).list<JobSeeker>()
+    val total = jobSeekerRepository.count()
+    val totalPages = if (total == 0L) 0 else ceil(total.toDouble() / size).toInt()
+    return PaginationResponse(
+      content = jobSeekers.map { jobSeekerRepository.toDto(it) },
+      totalElements = total,
+      totalPages = totalPages,
+      size = size,
+      pageIndex = pageIndex
+    )
   }
 
   @Transactional

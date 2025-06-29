@@ -1,6 +1,6 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, effect, OnInit, signal, ViewChild, WritableSignal} from '@angular/core';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatPaginator, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import {Router, RouterModule} from '@angular/router';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -15,9 +15,9 @@ import {FormsModule} from '@angular/forms';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 //import * as FileSaver from 'file-saver';
 import {JobseekerService} from "../../services/jobseeker.service";
-import { JobSeekerModel, JobSeeker } from './jobseeker.model';
-import {JobseekerAddDialogComponent} from "./jobseeker-add-dialog/jobseeker-add-dialog.component";
-import * as XLSX from 'xlsx';
+import {JobSeeker, JobSeekerModel} from './jobseeker.model';
+import {JobSeekerDto} from "../../model/JobSeekerDto";
+import {PaginationResponse} from "../../model/PaginationResponse";
 
 @Component({
   selector: 'app-jobseeker',
@@ -48,94 +48,45 @@ export class JobseekerComponent implements OnInit {
 
 
   displayedColumns: string[] =
-  ['gender', 'nom', 'prenom', 'qpv', 'activity', 'dernierRdv',
-    'licence', 'status', 'action-edit'];
-  dataSource = new MatTableDataSource<JobSeeker>();
+    ['gender', 'nom', 'prenom', "phoneNumber", 'status', 'action-edit'];
+  dataSource = new MatTableDataSource<JobSeekerDto>([]);
 
   selection = new Set<any>(); // ou MatSelectionModel si tu veux plus avancé
 
-  //filtre avancée
+  jobsSeekersDto: WritableSignal<JobSeekerDto[]> = signal<JobSeekerDto[]>([]);
+  jobSeekerCount: WritableSignal<number> = signal(0);
+  jobSeekerPageIndex: WritableSignal<number> = signal(0);
+  jobSeekerPageSize: WritableSignal<number> = signal(10);
 
+  //filtre avancée
   filterGender: string | null = null;
   filterQpv: string | null = null;
   filterActivity: string | null = null;
   filterStatus: number | null = null;
   //PErsonnalisation des colonnes
   allColumns = [
-    { key: 'gender', label: 'Civilité' },
-    { key: 'nom', label: 'Nom' },
-    { key: 'prenom', label: 'Prénom' },
-    { key: 'qpv', label: 'QPV' },
-    { key: 'activity', label: 'Secteur d\'activité' },
-    { key: 'dernierRdv', label: 'Date dernier RDV' },
-    { key: 'licence', label: 'Permis de conduire' },
-    { key: 'status', label: 'Statut' },
-    { key: 'action-edit', label: 'Actions' },
+    {key: 'gender', label: 'Civilité'},
+    {key: 'nom', label: 'Nom'},
+    {key: 'prenom', label: 'Prénom'},
+    {key: 'phoneNumber', label: 'Num. tel.'},
+    {key: 'status', label: 'Statut'},
+    {key: 'action-edit', label: 'Actions'},
   ];
 
   sectors: string[] = []; // à remplir avec tes secteurs existants
   statuses = [
-    { value: 'active', label: 'Actif' },
-    { value: 'inactive', label: 'Inactif' },
-    { value: 'pending', label: 'En attente' },
+    {value: 'active', label: 'Actif'},
+    {value: 'inactive', label: 'Inactif'},
+    {value: 'pending', label: 'En attente'},
     // adapte selon ton model
   ]
 
   statusOptions = [
-  { value: 1, icon: 'error', label: 'Sans Emploi', class: 'icon-error' },
-  { value: 2, icon: 'check_circle', label: 'Sous contrat', class: 'icon-success' },
-  { value: 3, icon: 'hourglass_empty', label: 'Nouveau', class: 'icon-pending' },
-  { value: 0, icon: 'help_outline', label: 'Inconnu', class: 'icon-default' }
-];
-
-  demandeurs = [
-    { id: 1, gender: 'Mme', nom: 'Durand', prenom: 'Sophie', qpv: 'oui', activity: 'BTP', dernierRdv: new Date(), licence: 'Permis B', status: 1 },
-    { id: 2, gender: 'M.', nom: 'Martin', prenom: 'Julien', qpv: 'non', activity: 'Informatique', dernierRdv: new Date(), licence: 'Permis A', status: 0 },
-    { id: 3, gender: 'Mme', nom: 'Petit', prenom: 'Camille', qpv: 'oui', activity: 'Commerce', dernierRdv: new Date(), licence: 'Aucun', status: 1 },
-    { id: 4, gender: 'M.', nom: 'Robert', prenom: 'Lucas', qpv: 'non', activity: 'BTP', dernierRdv: new Date(), licence: 'Permis B', status: 2 },
-    { id: 5, gender: 'Mme', nom: 'Moreau', prenom: 'Chloé', qpv: 'oui', activity: 'Santé', dernierRdv: new Date(), licence: 'Permis C', status: 1 },
-    { id: 6, gender: 'M.', nom: 'Garcia', prenom: 'Thomas', qpv: 'non', activity: 'Informatique', dernierRdv: new Date(), licence: 'Aucun', status: 0 },
-    { id: 7, gender: 'Mme', nom: 'Bernard', prenom: 'Élodie', qpv: 'oui', activity: 'Éducation', dernierRdv: new Date(), licence: 'Permis B', status: 2 },
-    { id: 8, gender: 'M.', nom: 'Lemoine', prenom: 'Antoine', qpv: 'non', activity: 'Transport', dernierRdv: new Date(), licence: 'Permis C', status: 1 },
-    { id: 9, gender: 'Mme', nom: 'Faure', prenom: 'Claire', qpv: 'oui', activity: 'Santé', dernierRdv: new Date(), licence: 'Permis B', status: 0 },
-    { id: 10, gender: 'M.', nom: 'Andre', prenom: 'Matthieu', qpv: 'oui', activity: 'BTP', dernierRdv: new Date(), licence: 'Permis A', status: 2 },
-    { id: 11, gender: 'Mme', nom: 'Mercier', prenom: 'Nathalie', qpv: 'non', activity: 'Commerce', dernierRdv: new Date(), licence: 'Permis B', status: 1 },
-    { id: 12, gender: 'M.', nom: 'Fernandez', prenom: 'Kevin', qpv: 'oui', activity: 'Éducation', dernierRdv: new Date(), licence: 'Permis C', status: 1 },
-    { id: 13, gender: 'Mme', nom: 'Leroy', prenom: 'Lucie', qpv: 'oui', activity: 'Informatique', dernierRdv: new Date(), licence: 'Aucun', status: 0 },
-    { id: 14, gender: 'M.', nom: 'Lopez', prenom: 'Enzo', qpv: 'non', activity: 'Transport', dernierRdv: new Date(), licence: 'Permis B', status: 1 },
-    { id: 15, gender: 'Mme', nom: 'Roux', prenom: 'Manon', qpv: 'non', activity: 'Santé', dernierRdv: new Date(), licence: 'Permis A', status: 2 },
-    { id: 16, gender: 'M.', nom: 'Blanc', prenom: 'Hugo', qpv: 'oui', activity: 'BTP', dernierRdv: new Date(), licence: 'Permis B', status: 0 },
-    { id: 17, gender: 'Mme', nom: 'Meunier', prenom: 'Amandine', qpv: 'oui', activity: 'Commerce', dernierRdv: new Date(), licence: 'Permis C', status: 1 },
-    { id: 18, gender: 'M.', nom: 'Perez', prenom: 'Quentin', qpv: 'non', activity: 'Informatique', dernierRdv: new Date(), licence: 'Aucun', status: 2 },
-    { id: 19, gender: 'Mme', nom: 'Fournier', prenom: 'Marion', qpv: 'oui', activity: 'Éducation', dernierRdv: new Date(), licence: 'Permis B', status: 1 },
-    { id: 20, gender: 'M.', nom: 'Girard', prenom: 'Bastien', qpv: 'non', activity: 'Transport', dernierRdv: new Date(), licence: 'Permis C', status: 0 },
-    { id: 21, gender: 'Mme', nom: 'Garnier', prenom: 'Justine', qpv: 'oui', activity: 'Santé', dernierRdv: new Date(), licence: 'Permis B', status: 1 },
-    { id: 22, gender: 'M.', nom: 'Chevalier', prenom: 'Yanis', qpv: 'non', activity: 'BTP', dernierRdv: new Date(), licence: 'Permis A', status: 2 },
-    { id: 23, gender: 'Mme', nom: 'Lambert', prenom: 'Emma', qpv: 'oui', activity: 'Informatique', dernierRdv: new Date(), licence: 'Aucun', status: 0 },
-    { id: 24, gender: 'M.', nom: 'Bonnet', prenom: 'Noah', qpv: 'oui', activity: 'Commerce', dernierRdv: new Date(), licence: 'Permis C', status: 1 },
-    { id: 25, gender: 'Mme', nom: 'Dupuis', prenom: 'Céline', qpv: 'non', activity: 'Éducation', dernierRdv: new Date(), licence: 'Permis B', status: 2 },
-    { id: 26, gender: 'M.', nom: 'Bertrand', prenom: 'Alexis', qpv: 'oui', activity: 'Transport', dernierRdv: new Date(), licence: 'Permis A', status: 1 },
-    { id: 27, gender: 'Mme', nom: 'Perrin', prenom: 'Isabelle', qpv: 'non', activity: 'Santé', dernierRdv: new Date(), licence: 'Permis C', status: 0 },
-    { id: 28, gender: 'M.', nom: 'Rolland', prenom: 'Léo', qpv: 'oui', activity: 'BTP', dernierRdv: new Date(), licence: 'Permis B', status: 2 },
-    { id: 29, gender: 'Mme', nom: 'Leclerc', prenom: 'Anaïs', qpv: 'oui', activity: 'Commerce', dernierRdv: new Date(), licence: 'Aucun', status: 1 },
-    { id: 30, gender: 'M.', nom: 'Gaillard', prenom: 'Nathan', qpv: 'non', activity: 'Éducation', dernierRdv: new Date(), licence: 'Permis B', status: 0 }
+    {value: 1, icon: 'error', label: 'Sans Emploi', class: 'icon-error'},
+    {value: 2, icon: 'check_circle', label: 'Sous contrat', class: 'icon-success'},
+    {value: 3, icon: 'hourglass_empty', label: 'Nouveau', class: 'icon-pending'},
+    {value: 0, icon: 'help_outline', label: 'Inconnu', class: 'icon-default'}
   ];
-
-  newJobSeeker: JobSeeker = {
-    id: 0,
-    gender: '',
-    nom: '',
-    prenom: '',
-    qpv: '',
-    activity: '',
-    dernierRdv: null,
-    licence: '',
-    status: 0,
-  };
-
-  newSeeker: JobSeeker = new JobSeekerModel();
-
-
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -144,55 +95,16 @@ export class JobseekerComponent implements OnInit {
     private router: Router,
     private jobseekerService: JobseekerService,
     private dialog: MatDialog) {
+    effect(() => {
+      this.dataSource.data = this.jobsSeekersDto();
+    })
   }
 
   ngOnInit() {
-    this.jobseekerService.getAllLazy({pageNumber: 0, size: 10}).subscribe({
-      next: (data: any) => {
-        console.log(data);
-      },
-      error: err => console.error(err)
-    });
+    this.refreshJobSeekers(this.jobSeekerPageIndex(), this.jobSeekerPageSize());
 
-    // Simule des données — remplace par le service back
-    this.dataSource.data = [
-      {
-        id: 1,
-        gender: 'Mme',
-        nom: 'Durand',
-        prenom: 'Sophie',
-        qpv: "oui",
-        activity: 'BTP',
-        dernierRdv: new Date(),
-        licence: 'Permis B',
-        status: 1
-      },
-      {
-        id: 2,
-        gender: 'Mme',
-        nom: 'Dupond',
-        prenom: 'Janine',
-        qpv: "oui",
-        activity: 'BTP',
-        dernierRdv: new Date(),
-        licence: 'Permis B',
-        status: 2
-      },
-      {
-        id: 3,
-        gender: 'M.',
-        nom: 'Bernard',
-        prenom: 'Robert',
-        qpv: "non",
-        activity: 'BTP',
-        dernierRdv: new Date(),
-        licence: 'Permis B',
-        status: 3
-      },
-    ];
-    this.dataSource = new MatTableDataSource<JobSeeker>(this.demandeurs as JobSeeker[]);
 
-    this.dataSource.filterPredicate = (data: JobSeeker, filter: string): boolean => {
+    /*this.dataSource.filterPredicate = (data: JobSeeker, filter: string): boolean => {
       const search = JSON.parse(filter);
 
       const matchesText =
@@ -206,7 +118,7 @@ export class JobseekerComponent implements OnInit {
       const matchesStatus = search.status !== null && search.status !== undefined ? data.status === search.status : true;
 
       return Boolean(matchesText && matchesGender && matchesQpv && matchesActivity && matchesStatus);
-    };
+    };*/
 
   }
 
@@ -233,7 +145,7 @@ export class JobseekerComponent implements OnInit {
     }
   }
 
-  exporterVersExcel(): void {
+  /*exporterVersExcel(): void {
     const dataToExport = this.dataSource.filteredData.map(row => {
       const exportRow: any = {};
 
@@ -253,9 +165,9 @@ export class JobseekerComponent implements OnInit {
 
 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = { Sheets: { Feuille1: worksheet }, SheetNames: ['Feuille1'] };
+    const workbook = {Sheets: {Feuille1: worksheet}, SheetNames: ['Feuille1']};
     XLSX.writeFile(workbook, 'liste-jobseekers.xlsx');
-  }
+  }*/
 
   toggleSelection(row: any) {
     if (this.selection.has(row)) {
@@ -283,7 +195,7 @@ export class JobseekerComponent implements OnInit {
 
   /* GESTION DE L'AJOUT D'UN JOBSEEKER  */
 
-  openAddDialog() {
+  /*openAddDialog() {
     const dialogRef = this.dialog.open(JobseekerAddDialogComponent, {
       width: '400px',
     });
@@ -293,16 +205,16 @@ export class JobseekerComponent implements OnInit {
         this.onAddJobSeeker(result);
       }
     });
-  }
+  }*/
 
-  onAddJobSeeker(newSeeker: JobSeeker): void {
+  /*onAddJobSeeker(newSeeker: JobSeeker): void {
     const safeSeeker = {
       ...newSeeker,
       dernierRdv: newSeeker.dernierRdv ?? new Date()
     };
     this.demandeurs.push(safeSeeker);
     this.dataSource.data = [...this.demandeurs];
-  }
+  }*/
 
   deleteRow(row: any) {
     console.log('Suppression de :', row);
@@ -331,17 +243,33 @@ export class JobseekerComponent implements OnInit {
     }[status] || 'icon-default';
   }
 
-  getStatusDisplay(status: number): { icon: string; label: string; class?: string } {
+  getStatusDisplay(status: string): { icon: string; label: string; class?: string } {
     switch (status) {
-      case 1:
-        return { icon: 'error', label: 'Sans Emploi', class: 'icon-error' };
-      case 2:
-        return { icon: 'check_circle', label: 'Sous contrat', class: 'icon-success' };
-      case 3:
-        return { icon: 'hourglass_empty', label: 'Nouveau', class: 'icon-pending' };
+      case "SANS_EMPLOI":
+        return {icon: 'error', label: 'Sans Emploi', class: 'icon-error'};
+      case "SOUS_CONTRAT":
+        return {icon: 'check_circle', label: 'Sous contrat', class: 'icon-success'};
       default:
-        return { icon: 'help_outline', label: 'Inconnu', class: 'icon-default' };
+        return {icon: 'help_outline', label: 'Inconnu', class: 'icon-default'};
     }
+  }
+
+  refreshJobSeekers(pageNumber: number, pageSize: number) {
+    this.jobseekerService.getAllLazy({pageNumber: pageNumber, size: pageSize}).subscribe({
+      next: (data: PaginationResponse<JobSeekerDto>) => {
+        console.log(data);
+        this.jobSeekerCount.set(data.totalElements!);
+        this.jobsSeekersDto.set(data.content!);
+        this.jobSeekerPageIndex.set(data.pageIndex!);
+        this.jobSeekerPageSize.set(data.size!);
+        console.log(this.jobSeekerCount);
+      },
+      error: err => console.error(err)
+    });
+  }
+
+  onPageChange(event: PageEvent) {
+    this.refreshJobSeekers(event.pageIndex, event.pageSize);
   }
 
 }

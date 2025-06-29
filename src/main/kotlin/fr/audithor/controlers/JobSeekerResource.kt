@@ -1,5 +1,7 @@
 package fr.audithor.controlers
 
+import fr.audithor.dto.JobSeekerDto
+import fr.audithor.dto.PaginationResponse
 import fr.audithor.dto.exceptions.FileEmptyException
 import fr.audithor.services.JobSeekerService
 import jakarta.annotation.security.RolesAllowed
@@ -20,8 +22,8 @@ class JobSeekerResource(private val jobSeekerService: JobSeekerService) {
   @RolesAllowed("ADMINISTRATEUR", "CONSEILLER_INSERTION", "AGENT_ACCUEIL", "RESPONSABLE_RELATION_PRO")
   @Produces(MediaType.APPLICATION_JSON)
   fun getAllLazy(@QueryParam("page") page: Int, @QueryParam("size") size: Int): Response {
-    val jobSeekersDto = jobSeekerService.getAllLazy(page, size)
-    return Response.ok(jobSeekersDto).build()
+    val paginationResponse: PaginationResponse<JobSeekerDto> = jobSeekerService.getAllLazy(page, size)
+    return Response.ok(paginationResponse).build()
   }
 
   @GET
