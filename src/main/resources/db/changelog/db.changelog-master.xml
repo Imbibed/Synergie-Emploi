@@ -94,4 +94,34 @@
     </addColumn>
   </changeSet>
 
+  <changeSet id="jva-30062025-01" author="jva">
+    <createTable tableName="job_seeker_license">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="job_seeker_id" type="BIGINT">
+        <constraints
+          foreignKeyName="fk_job_seeker_license_job_seeker"
+          nullable="false"
+          referencedTableName="job_seeker"
+          referencedColumnNames="id"/>
+      </column>
+      <column name="license_id" type="BIGINT">
+        <constraints
+          foreignKeyName="fk_job_seeker_license_license"
+          nullable="false"
+          referencedTableName="stc_driving_licence"
+          referencedColumnNames="id"/>
+      </column>
+    </createTable>
+
+    <createIndex indexName="idx_job_seeker_license_seeker" tableName="job_seeker_license">
+      <column name="job_seeker_id"/>
+    </createIndex>
+
+    <createIndex indexName="idx_job_seeker_license_license" tableName="job_seeker_license">
+      <column name="license_id"/>
+    </createIndex>
+  </changeSet>
+
 </databaseChangeLog>
