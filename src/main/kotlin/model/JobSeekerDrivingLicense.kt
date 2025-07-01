@@ -2,9 +2,10 @@ package model
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase
 import jakarta.persistence.*
-import model.static.DrivingLicenceTypes
+import model.static.DrivingLicenseTypes
 
 @Entity
+@Table(name = "job_seeker_license")
 class JobSeekerDrivingLicense(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,5 +17,5 @@ class JobSeekerDrivingLicense(
 
   @ManyToOne
   @JoinColumn(name = "license_id", nullable = false)
-  var license: DrivingLicenceTypes = DrivingLicenceTypes()
+  var license: DrivingLicenseTypes = DrivingLicenseTypes()
 ): PanacheEntityBase()

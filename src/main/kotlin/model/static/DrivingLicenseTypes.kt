@@ -5,12 +5,12 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "stc_driving_licence")
-class DrivingLicenceTypes : StaticEntity<DrivingLicenceType> {
+class DrivingLicenseTypes : StaticEntity<DrivingLicenseType> {
   constructor() : super()
-  constructor(enumValue: DrivingLicenceType) : super(enumValue)
+  constructor(enumValue: DrivingLicenseType) : super(enumValue)
 }
 
-enum class DrivingLicenceType(override val desc: String) : DescribableEnum {
+enum class DrivingLicenseType(override val desc: String) : DescribableEnum {
   AM("Permis AM - Cyclomoteur"),
   A("Permis A - Moto"),
   A1("Permis A1 - Moto"),
@@ -21,5 +21,6 @@ enum class DrivingLicenceType(override val desc: String) : DescribableEnum {
   D("Permis D - Transport en Commun"),
   E("Permis E - (BE, CE, DE)"),
   NOT_ALLOWED("Retrait ou Supendu"),
-  NONE("Sans permis")
+  NONE("Sans permis"),
+  B("Permis auto")
 }

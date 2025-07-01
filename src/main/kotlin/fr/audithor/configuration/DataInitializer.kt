@@ -5,7 +5,6 @@ import fr.audithor.repositories.UserRepository
 import fr.audithor.repositories.staticdata.DrivingLicenceTypesRepository
 import fr.audithor.repositories.staticdata.GradesLevelsRepository
 import io.quarkus.elytron.security.common.BcryptUtil
-import io.quarkus.hibernate.orm.panache.PanacheEntity
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase
 import io.quarkus.hibernate.orm.panache.PanacheRepository
 import io.quarkus.runtime.Startup
@@ -55,9 +54,9 @@ class DataInitializer(
 
     //DrivingLicenceTypes
     insertMissingStaticData(
-      drivingLicenceTypesRepository.findAll().list<DrivingLicenceTypes>().toList().map{ it.name }.toSet(),
-      DrivingLicenceType.entries,
-      { DrivingLicenceTypes(it) },
+      drivingLicenceTypesRepository.findAll().list<DrivingLicenseTypes>().toList().map{ it.name }.toSet(),
+      DrivingLicenseType.entries,
+      { DrivingLicenseTypes(it) },
       drivingLicenceTypesRepository
     )
 

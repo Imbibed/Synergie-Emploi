@@ -2,8 +2,8 @@ package fr.audithor.repositories.staticdata
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
-import model.static.DrivingLicenceTypes
+import model.static.DrivingLicenseTypes
 
 @ApplicationScoped
-class DrivingLicenceTypesRepository : PanacheRepository<DrivingLicenceTypes> {
+class DrivingLicenceTypesRepository : PanacheRepository<DrivingLicenseTypes> {
 }
