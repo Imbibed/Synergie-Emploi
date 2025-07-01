@@ -124,4 +124,18 @@
     </createIndex>
   </changeSet>
 
+  <changeSet id="jva-01072025-01" author="jva">
+    <addUniqueConstraint
+      tableName="job_seeker"
+      columnNames="lastName, firstName, phoneNumber"
+      constraintName="uk_jobseeker_name_tel"/>
+  </changeSet>
+
+  <changeSet id="jva-01072025-02" author="jva">
+    <addUniqueConstraint
+      tableName="job_seeker_license"
+      columnNames="job_seeker_id, license_id"
+      constraintName="uk_jobseeker_license_id"/>
+  </changeSet>
+
 </databaseChangeLog>
