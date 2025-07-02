@@ -55,11 +55,27 @@ $success-color : #84D1C7;
 $stable-color : #0e87ce;
 $border-radius: 8px;
 
+$success-color: #519a51;
+$error-color: #b65454;
+$warning-color: #D76D27;
+
 html,
 body {
   height: 100%;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.green-snack {
+  background-color: $success-color;
+}
+
+.red-snack {
+  background-color: $error-color;
+}
+
+.yellow-snack{
+  background-color: $warning-color;
 }
 
 //== GESTION DU SNACK BAR ==//
