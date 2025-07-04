@@ -1,57 +1,74 @@
 package fr.audithor.configuration
 
-import fr.audithor.repositories.RoleRepository
+import fr.audithor.repositories.RolesRepository
 import fr.audithor.repositories.UserRepository
+import fr.audithor.repositories.staticdata.DrivingLicenceTypesRepository
+import fr.audithor.repositories.staticdata.GradesLevelsRepository
 import io.quarkus.elytron.security.common.BcryptUtil
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase
+import io.quarkus.hibernate.orm.panache.PanacheRepository
 import io.quarkus.runtime.Startup
 import jakarta.annotation.PostConstruct
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.transaction.Transactional
-import model.Role
 import model.User
+import model.static.*
+import kotlin.enums.EnumEntries
 
 @Startup
 @ApplicationScoped
 class DataInitializer(
   private val userRepository: UserRepository,
-  private val roleRepository: RoleRepository) {
-
-  companion object {
-    const val ADMIN_ROLE_NAME = "Administrateur"
-    const val INS_ROLE_NAME = "Conseiller Insertion"
-    const val ACC_ROLE_NAME = "Agent Accueil"
-    const val REL_ROLE_NAME = "Responsable Relation Pro"
-  }
+  private val rolesRepository: RolesRepository,
+  private val gradesLevelsRepository: GradesLevelsRepository,
+  private val drivingLicenceTypesRepository: DrivingLicenceTypesRepository) {
 
   @PostConstruct
   fun init() {
-    initRoles()
+    initStaticData()
     initUsers()
   }
 
-  @Transactional
-  fun initRoles() {
-    if(roleRepository.count() == 0L) {
-      val roleAdmin = Role().apply {
-        name = ADMIN_ROLE_NAME
-      }
-      val roleIns = Role().apply {
-        name = INS_ROLE_NAME
-      }
-      val roleAcc = Role().apply {
-        name = ACC_ROLE_NAME
-      }
-      val roleRel = Role().apply {
-        name = REL_ROLE_NAME
-      }
-
-      roleIns.name = INS_ROLE_NAME
-
-      roleAcc.name = ACC_ROLE_NAME
-
-      roleRel.name = REL_ROLE_NAME
-      roleRepository.persist(roleAdmin,roleIns,roleAcc,roleRel)
+  fun <E : PanacheEntityBase, T : Enum<T>> insertMissingStaticData(
+    existingNames: Set<String>,
+    allEnum: EnumEntries<T>,
+    entityFactory: (T) -> E,
+    repository: PanacheRepository<E>
+  ) {
+    val toInsert = allEnum.filter { it.name !in existingNames }.map { entityFactory(it) }
+    if (toInsert.isNotEmpty()) {
+      repository.persist(toInsert)
     }
+  }
+
+
+  @Transactional
+  fun initStaticData() {
+    //GradesLevels
+    insertMissingStaticData(
+      gradesLevelsRepository.findAll().list<GradesLevels>().toList().map{ it.name }.toSet(),
+      GradesLevel.entries,
+      { GradesLevels(it) },
+      gradesLevelsRepository
+    )
+
+    //DrivingLicenceTypes
+    insertMissingStaticData(
+      drivingLicenceTypesRepository.findAll().list<DrivingLicenseTypes>().toList().map{ it.name }.toSet(),
+      DrivingLicenseType.entries,
+      { DrivingLicenseTypes(it) },
+      drivingLicenceTypesRepository
+    )
+
+    //Roles
+    insertMissingStaticData(
+      rolesRepository.findAll().list<Roles>().toList().map{ it.name }.toSet(),
+      Role.entries,
+      { Roles(it) },
+      rolesRepository
+    )
+
+    //TODO Languages and Skills
   }
 
   @Transactional
@@ -59,10 +76,10 @@ class DataInitializer(
     if (userRepository.count() == 0L) {
       val hashedPassword = BcryptUtil.bcryptHash("test")
 
-      val adminRole = roleRepository.find("name", ADMIN_ROLE_NAME).firstResult<Role>()
-      val insRole = roleRepository.find("name", INS_ROLE_NAME).firstResult<Role>()
-      val accRole = roleRepository.find("name", ACC_ROLE_NAME).firstResult<Role>()
-      val relRole = roleRepository.find("name", REL_ROLE_NAME).firstResult<Role>()
+      val adminRole = rolesRepository.find("name", Role.ADMINISTRATEUR.name).firstResult<Roles>()
+      val insRole = rolesRepository.find("name", Role.CONSEILLER_INSERTION.name).firstResult<Roles>()
+      val accRole = rolesRepository.find("name", Role.AGENT_ACCUEIL.name).firstResult<Roles>()
+      val relRole = rolesRepository.find("name", Role.RESPONSABLE_RELATION_PRO.name).firstResult<Roles>()
 
       val admin = User().apply {
         username = "admin_user"

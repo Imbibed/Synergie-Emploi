@@ -9,14 +9,13 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition, } from '@angular/material/snack-bar';
 import * as L from 'leaflet';
+import {ToastService} from "../../services/toast.service";
 
 interface Matches {
   nom: string;
@@ -42,14 +41,12 @@ interface Matches {
     MatTableModule,
     MatCardModule,
     MatDividerModule,
-    MatSnackBarModule,
     MatSelectModule,
     RouterModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatRadioModule,
     MatSlideToggleModule,
-    MatSnackBarModule,
   ],
   templateUrl: './edit-partner.component.html',
   styleUrls: ['./edit-partner.component.scss']
@@ -68,10 +65,6 @@ export class EditPartnerComponent implements OnInit {
   isCollapsedMAP = true;
   isCollapsedDEM = true;
 
-  private _snackBar = inject(MatSnackBar);
-  horizontalPosition: MatSnackBarHorizontalPosition = 'center';
-  verticalPosition: MatSnackBarVerticalPosition = 'top';
-
   map!: L.Map;
   marker?: L.Marker;
   latitude: number = 49.450001;  // Canteleu
@@ -81,6 +74,7 @@ export class EditPartnerComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
+    private toastService: ToastService
   ) {
     this.form = this.fb.group({
       urlPhoto: [''],
@@ -251,31 +245,6 @@ export class EditPartnerComponent implements OnInit {
     }
   }
 
-  openSnackBar() {
-    this._snackBar.open('Cannonball!!', 'Splash', {
-      horizontalPosition: this.horizontalPosition,
-      verticalPosition: this.verticalPosition,
-    });
-  }
-
-  showSuccess(message: string) {
-    this._snackBar.open(`✔️ ${message}`, 'Fermer', {
-      duration: 3000,
-      panelClass: ['success-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'top'
-    });
-  }
-
-  showError(message: string) {
-    this._snackBar.open(`❌ ${message}`, 'Fermer', {
-      duration: 5000,
-      panelClass: ['error-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'top'
-    });
-  }
-
   addMatches() {
     // expArray.push(this.createExperienceGroup(exp));
     console.log()
@@ -292,7 +261,7 @@ export class EditPartnerComponent implements OnInit {
   }
   onSave() {
     console.log();
-    this.showSuccess('Formulaire sauvegardé avec succès !');
+    this.toastService.success('Formulaire sauvegardé avec succès !', "Sauvegarde");
     //TODO : SAUVEGARDE DU FORMULAIRE
   }
 

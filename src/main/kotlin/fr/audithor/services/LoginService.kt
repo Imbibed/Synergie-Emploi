@@ -4,11 +4,13 @@ import fr.audithor.dto.UsernameAndRole
 import io.quarkus.elytron.security.common.BcryptUtil
 import io.smallrye.jwt.build.Jwt
 import jakarta.enterprise.context.ApplicationScoped
+import jakarta.transaction.Transactional
 import java.time.Instant
 
 @ApplicationScoped
 class LoginService(val userService: UserService) {
 
+  @Transactional
   fun verifyCredentials(username: String, password: String): Boolean {
     val user = this.userService.findByUsername(username)
     return BcryptUtil.matches(password, user.password)

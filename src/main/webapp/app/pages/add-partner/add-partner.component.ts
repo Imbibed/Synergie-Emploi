@@ -8,7 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { Router, RouterModule } from '@angular/router';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -32,12 +31,11 @@ import * as L from 'leaflet';
     MatTableModule,
     MatCardModule,
     MatDividerModule,
-    MatSnackBarModule,
     MatSelectModule,
     RouterModule,
     MatDatepickerModule,
     MatNativeDateModule,
-  ], 
+  ],
   templateUrl: './add-partner.component.html',
   styleUrls: ['./add-partner.component.scss']
 })
@@ -118,7 +116,7 @@ ngOnInit(): void {
       this.router.navigate(['partner']);
     }
 
-  /*GESTION LEAFLET MAP*/ 
+  /*GESTION LEAFLET MAP*/
 
   initMap(): void {
     this.map = L.map('map').setView([48.8566, 2.3522], 13); // Paris par défaut
@@ -148,12 +146,12 @@ ngOnInit(): void {
   }
   this.map.setView(latlng, 13);
 }
-     
+
 
   actions = new MatTableDataSource([
     { date: new Date(), type: 'Entretien téléphonique', note: 'Interessé' },
     { date: new Date(), type: 'Présentation', note: 'Envoyé à XYZ' },
-  ]); 
+  ]);
 
   displayedColumns: string[] = ['date', 'type', 'note'];
 

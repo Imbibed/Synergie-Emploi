@@ -1,7 +1,7 @@
 package fr.audithor.controlers
 
 import fr.audithor.dto.Credentials
-import fr.audithor.exceptions.UserNotFoundException
+import fr.audithor.dto.exceptions.UserNotFoundException
 import fr.audithor.services.LoginService
 import jakarta.annotation.security.PermitAll
 import jakarta.annotation.security.RolesAllowed
@@ -42,7 +42,7 @@ class LoginResource(val loginService: LoginService) {
   }
 
   @GET
-  @RolesAllowed("Administrateur", "Conseiller Insertion", "Agent Accueil", "Responsable Relation Pro")
+  @RolesAllowed("ADMINISTRATEUR", "CONSEILLER_INSERTION", "AGENT_ACCUEIL", "RESPONSABLE_RELATION_PRO")
   @Produces(MediaType.APPLICATION_JSON)
   fun isLogged(@Context securityContext: SecurityContext): Response {
     val principal = securityContext.userPrincipal

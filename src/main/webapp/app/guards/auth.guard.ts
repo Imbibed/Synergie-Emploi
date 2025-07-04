@@ -6,7 +6,6 @@ import {catchError, map, of} from "rxjs";
 export const authGuardFn: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const authService: AuthenticationService = inject(AuthenticationService);
   const router: Router = inject(Router);
-
   return authService.isLogged().pipe(
     map((user: {username: string, roles: string[]}) => {
       authService.setUser(user);

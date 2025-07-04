@@ -1,10 +1,13 @@
 package fr.audithor.dto
 
-import java.time.LocalDate
+import model.Gender
+import model.JobSeekerStatus
 
 data class JobSeekerDto(
+  val id: Long,
   val firstName: String,
   val lastName: String,
   val phoneNumber: String,
-  val registrationDate: LocalDate
+  var status: JobSeekerStatus,
+  var gender: Gender
 )

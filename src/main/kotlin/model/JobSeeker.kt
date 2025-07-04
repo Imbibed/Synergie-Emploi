@@ -1,24 +1,33 @@
 package model
 
-import fr.audithor.dto.JobSeekerDto
-import io.quarkus.hibernate.orm.panache.PanacheEntity
-import jakarta.persistence.Entity
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToOne
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase
+import jakarta.persistence.*
 import java.time.LocalDate
-@Entity
-class JobSeeker : PanacheEntity() {
 
-  @OneToOne(optional = false)
-  @JoinColumn(name = "person_id", nullable = false)
-  lateinit var person: Person
-  lateinit var email: String
-  lateinit var registrationDate: LocalDate
-  lateinit var status: JobSeekerStatus
-  var rgpdConsent: Boolean = false
-}
+@Entity
+@Table(name = "job_seeker")
+class JobSeeker(
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  var id: Long? = null,
+  var firstName: String = "",
+  var lastName: String = "",
+  var phoneNumber: String = "",
+  var email: String = "",
+  var registrationDate: LocalDate = LocalDate.now(),
+  @Enumerated(EnumType.STRING)
+  var status: JobSeekerStatus = JobSeekerStatus.INCONNU,
+  @Enumerated(EnumType.STRING)
+  var gender: Gender = Gender.FEMME
+) : PanacheEntityBase()
 
 enum class JobSeekerStatus{
-  ACTIF,
-  INACTIF
+  SANS_EMPLOI,
+  INCONNU,
+  SOUS_CONTRAT
+}
+
+enum class Gender {
+  HOMME,
+  FEMME
 }

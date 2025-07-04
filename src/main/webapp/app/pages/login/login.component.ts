@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthenticationService} from "../../services/authentication.service";
 import {Router} from "@angular/router";
+import {ToastService} from "../../services/toast.service";
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,10 @@ export class LoginComponent {
 
   }
 
-  constructor(private authService: AuthenticationService, private router: Router){
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router,
+    private toastService: ToastService){
     this.loginForm = new FormGroup({
       username: new FormControl(null, [Validators.required]),
       password: new FormControl(null, [Validators.required])
@@ -30,16 +34,15 @@ export class LoginComponent {
 
 
   onSubmitLogin() {
-    console.log(this.loginForm.value);
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
           //this.authService.setToken(token.token);
-          //this.toastService.addToast({message: `Bienvenue.`, type: 'success'});
-          this.router.navigate(['home']).then();
+          this.toastService.success("Bienvenue", "Authentification");
+          this.router.navigate(['']).then();
         },
         error: err => {
-          //this.toastService.addToast({message: err.error, type: 'error'});
+          this.toastService.error("Error", "Authentification");
           console.error(err);
         }
       });
