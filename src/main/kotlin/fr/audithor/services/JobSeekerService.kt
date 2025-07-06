@@ -1,13 +1,15 @@
 package fr.audithor.services
 
-import fr.audithor.dto.JobSeekerDto
-import fr.audithor.dto.PaginationResponse
+import fr.audithor.dto.jobseeker.JobSeekerDto
+import fr.audithor.dto.jobseeker.JobSeekerPaginationResponse
 import fr.audithor.dto.exceptions.FileEmptyException
 import fr.audithor.dto.exceptions.WrongFileHeaderException
-import fr.audithor.repositories.JobSeekerDrivingLicenseRepository
+import fr.audithor.dto.jobseeker.JobSeekerPaginationRequest
 import fr.audithor.repositories.JobSeekerRepository
 import io.quarkus.panache.common.Page
 import jakarta.enterprise.context.ApplicationScoped
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 import jakarta.transaction.Transactional
 import model.Gender
 import model.JobSeeker
@@ -26,6 +28,9 @@ class JobSeekerService(
   private val jobSeekerDrivingLicenseService: JobSeekerDrivingLicenseService
 ) {
 
+  @PersistenceContext
+  lateinit var entityManager: EntityManager
+
   @ConfigProperty(name = "jobseeker.file.import")
   lateinit private var jobseekerImportFilePath: String
 
@@ -33,15 +38,48 @@ class JobSeekerService(
   lateinit private var jobseekerImportFilePathHeader: String
 
   @Transactional
-  fun getAllLazy(pageIndex: Int, size: Int): PaginationResponse<JobSeekerDto> {
-    val jobSeekers = jobSeekerRepository.findAll().page<JobSeeker>(Page.of(pageIndex, size)).list<JobSeeker>()
-    val total = jobSeekerRepository.count()
+  fun getAllLazy(req: JobSeekerPaginationRequest): JobSeekerPaginationResponse {
+    val pageIndex = req.pageIndex
+    val size = req.pageSize
+    val filter = req.jobSeekerFilter
+
+    val baseQuery = StringBuilder("FROM JobSeeker js WHERE 1=1")
+
+    val query = StringBuilder("SELECT js $baseQuery")
+    val countQuery = StringBuilder("SELECT COUNT(js) $baseQuery")
+
+    val params = mutableMapOf<String, Any>()
+
+    filter?.firstName?.takeIf { it.isNotBlank() }?.let {
+      query.append(" AND LOWER(js.firstName) LIKE LOWER(CONCAT(:firstName, '%'))")
+      countQuery.append(" AND LOWER(js.firstName) LIKE LOWER(CONCAT(:firstName, '%'))")
+      params["firstName"] = it
+    }
+
+    filter?.lastName?.takeIf { it.isNotBlank() }?.let {
+      query.append(" AND LOWER(js.lastName) LIKE LOWER(CONCAT(:lastName, '%'))")
+      countQuery.append(" AND LOWER(js.lastName) LIKE LOWER(CONCAT(:lastName, '%'))")
+      params["lastName"] = it
+    }
+
+    val queryResult = entityManager.createQuery(query.toString(), JobSeeker::class.java)
+    val countQueryResult = entityManager.createQuery(countQuery.toString(), Long::class.java)
+
+    params.forEach{ (k,v) ->
+      queryResult.setParameter(k, v)
+      countQueryResult.setParameter(k, v)
+    }
+
+    val total = countQueryResult.singleResult
+    val jobSeekers = queryResult.setFirstResult(pageIndex * size).setMaxResults(size).resultList
+
     val totalPages = if (total == 0L) 0 else ceil(total.toDouble() / size).toInt()
-    return PaginationResponse(
-      content = jobSeekers.map { jobSeekerRepository.toDto(it) },
+
+    return JobSeekerPaginationResponse(
+      content = jobSeekers.map { toDto(it) },
       totalElements = total,
       totalPages = totalPages,
-      size = size,
+      pageSize = size,
       pageIndex = pageIndex
     )
   }
@@ -88,6 +126,19 @@ class JobSeekerService(
       }
     }
 
+  }
+
+  fun toDto(jobSeeker: JobSeeker): JobSeekerDto {
+    jobSeeker.id?.let {
+      return JobSeekerDto(
+        id = it,
+        jobSeeker.firstName,
+        jobSeeker.lastName,
+        jobSeeker.phoneNumber,
+        jobSeeker.status,
+        jobSeeker.gender
+      )
+    } ?: throw Exception("")
   }
 
   private fun getJobSeekerGender(value: String?): Gender {
