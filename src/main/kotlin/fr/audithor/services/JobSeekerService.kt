@@ -62,6 +62,24 @@ class JobSeekerService(
       params["lastName"] = it
     }
 
+    filter?.gender?.takeIf { it.name.isNotBlank() }?.let {
+      query.append(" AND js.gender = :gender")
+      countQuery.append(" AND js.gender = :gender")
+      params["gender"] = it
+    }
+
+    filter?.phoneNumber?.takeIf { it.isNotBlank() }?.let {
+      query.append(" AND LOWER(js.phoneNumber) LIKE LOWER(CONCAT(:phoneNumber, '%'))")
+      countQuery.append(" LOWER(js.phoneNumber) LIKE LOWER(CONCAT(:phoneNumber, '%'))")
+      params["phoneNumber"] = it
+    }
+
+    filter?.status?.takeIf { it.name.isNotBlank() }?.let {
+      query.append(" AND js.status = :status")
+      countQuery.append(" AND js.status = :status")
+      params["status"] = it
+    }
+
     val queryResult = entityManager.createQuery(query.toString(), JobSeeker::class.java)
     val countQueryResult = entityManager.createQuery(countQuery.toString(), Long::class.java)
 

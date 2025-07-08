@@ -52,8 +52,12 @@ export class JobseekerComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['gender', 'nom', 'prenom', "phoneNumber", 'status', 'action-edit'];
   dataSource = new MatTableDataSource<JobSeekerDto, MatPaginator>([]);
   selection = new Set<any>(); // ou MatSelectionModel si tu veux plus avancé
+
   firstNameControl = new FormControl('');
   lastNameControl = new FormControl('');
+  genderControl = new FormControl('');
+  phoneNumberControl = new FormControl('');
+  statusControl = new FormControl('');
 
   jobsSeekersDto: WritableSignal<JobSeekerDto[]> = signal<JobSeekerDto[]>([]);
   jobSeekerCount: WritableSignal<number> = signal(0);
@@ -132,15 +136,36 @@ export class JobseekerComponent implements OnInit, AfterViewInit {
     this.firstNameControl.valueChanges
       .pipe(debounceTime(500))
       .subscribe(firstName => {
-        this.jobSeekerInputPagination.update(current => {
+        this.jobSeekerInputPagination.update((current: JobSeekerInputPagination) => {
           return {...current, jobSeekerFilter: {...current.jobSeekerFilter, firstName: firstName}} as JobSeekerInputPagination
         })
       })
     this.lastNameControl.valueChanges
       .pipe(debounceTime(500))
       .subscribe(lastName => {
-        this.jobSeekerInputPagination.update(current => {
+        this.jobSeekerInputPagination.update((current: JobSeekerInputPagination) => {
           return {...current, jobSeekerFilter: {...current.jobSeekerFilter, lastName: lastName}} as JobSeekerInputPagination
+        })
+      })
+    this.genderControl.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe( gender => {
+        this.jobSeekerInputPagination.update((current: JobSeekerInputPagination) => {
+          return {...current, jobSeekerFilter: {...current.jobSeekerFilter, gender: gender}} as JobSeekerInputPagination
+        })
+      })
+    this.phoneNumberControl.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe( phoneNumber => {
+        this.jobSeekerInputPagination.update((current: JobSeekerInputPagination) => {
+          return {...current, jobSeekerFilter: {...current.jobSeekerFilter, phoneNumber: phoneNumber}} as JobSeekerInputPagination
+        })
+      })
+    this.statusControl.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe( status => {
+        this.jobSeekerInputPagination.update((current: JobSeekerInputPagination) => {
+          return {...current, jobSeekerFilter: {...current.jobSeekerFilter, status: status}} as JobSeekerInputPagination
         })
       })
   }
