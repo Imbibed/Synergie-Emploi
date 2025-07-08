@@ -11,12 +11,15 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCardModule} from '@angular/material/card';
-import {FormsModule} from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 //import * as FileSaver from 'file-saver';
 import {JobseekerService} from "../../services/jobseeker.service";
 import {JobSeekerDto} from "../../model/JobSeekerDto";
 import {PaginationResponse} from "../../model/PaginationResponse";
+import {debounceTime, Subject} from "rxjs";
+import {JobSeekerFilter} from "../../model/JobSeekerFilter";
+import {JobSeekerInputPagination} from "../../model/export class JobSeekerInputPagination";
 
 @Component({
   selector: 'app-jobseeker',
@@ -36,7 +39,8 @@ import {PaginationResponse} from "../../model/PaginationResponse";
     MatCardModule,
     MatPaginatorModule,
     FormsModule,
-    MatDialogModule
+    MatDialogModule,
+    ReactiveFormsModule
   ],
   templateUrl: './jobseeker.component.html',
   styleUrls: ['./jobseeker.component.scss']
@@ -45,17 +49,20 @@ import {PaginationResponse} from "../../model/PaginationResponse";
 
 export class JobseekerComponent implements OnInit, AfterViewInit {
 
-
-  displayedColumns: string[] =
-    ['gender', 'nom', 'prenom', "phoneNumber", 'status', 'action-edit'];
+  displayedColumns: string[] = ['gender', 'nom', 'prenom', "phoneNumber", 'status', 'action-edit'];
   dataSource = new MatTableDataSource<JobSeekerDto, MatPaginator>([]);
-
   selection = new Set<any>(); // ou MatSelectionModel si tu veux plus avancé
+
+  firstNameControl = new FormControl('');
+  lastNameControl = new FormControl('');
+  genderControl = new FormControl('');
+  phoneNumberControl = new FormControl('');
+  statusControl = new FormControl('');
 
   jobsSeekersDto: WritableSignal<JobSeekerDto[]> = signal<JobSeekerDto[]>([]);
   jobSeekerCount: WritableSignal<number> = signal(0);
-  jobSeekerPageIndex: WritableSignal<number> = signal(0);
-  jobSeekerPageSize: WritableSignal<number> = signal(10);
+
+  jobSeekerInputPagination: WritableSignal<JobSeekerInputPagination> = signal(new JobSeekerInputPagination());
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -64,13 +71,17 @@ export class JobseekerComponent implements OnInit, AfterViewInit {
     private router: Router,
     private jobseekerService: JobseekerService,
     private dialog: MatDialog) {
+    this.setupFilters();
+    effect(() => {
+      this.refreshJobSeekers(this.jobSeekerInputPagination());
+    })
     effect(() => {
       this.dataSource = new MatTableDataSource<JobSeekerDto, MatPaginator>(this.jobsSeekersDto());
     })
   }
 
   ngOnInit() {
-    this.refreshJobSeekers(this.jobSeekerPageIndex(), this.jobSeekerPageSize());
+    //this.refreshJobSeekers(this.jobSeekerInputPagination());
   }
 
   ngAfterViewInit() {
@@ -105,20 +116,58 @@ export class JobseekerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  refreshJobSeekers(pageNumber: number, pageSize: number) {
-    this.jobseekerService.getAllLazy({pageNumber: pageNumber, size: pageSize}).subscribe({
+  refreshJobSeekers(jobSeekerInputPagination: JobSeekerInputPagination) {
+    this.jobseekerService.getAllLazy(jobSeekerInputPagination).subscribe({
       next: (data: PaginationResponse<JobSeekerDto>) => {
         this.jobSeekerCount.set(data.totalElements!);
         this.jobsSeekersDto.set(data.content!);
-        this.jobSeekerPageIndex.set(data.pageIndex!);
-        this.jobSeekerPageSize.set(data.size!);
       },
       error: err => console.error(err)
     });
   }
 
   onPageChange(event: PageEvent) {
-    this.refreshJobSeekers(event.pageIndex, event.pageSize);
+    this.jobSeekerInputPagination.update(current => {
+      return {...current, pageIndex: event.pageIndex, pageSize: event.pageSize}
+    });
+  }
+
+  setupFilters() {
+    this.firstNameControl.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe(firstName => {
+        this.jobSeekerInputPagination.update((current: JobSeekerInputPagination) => {
+          return {...current, jobSeekerFilter: {...current.jobSeekerFilter, firstName: firstName}} as JobSeekerInputPagination
+        })
+      })
+    this.lastNameControl.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe(lastName => {
+        this.jobSeekerInputPagination.update((current: JobSeekerInputPagination) => {
+          return {...current, jobSeekerFilter: {...current.jobSeekerFilter, lastName: lastName}} as JobSeekerInputPagination
+        })
+      })
+    this.genderControl.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe( gender => {
+        this.jobSeekerInputPagination.update((current: JobSeekerInputPagination) => {
+          return {...current, jobSeekerFilter: {...current.jobSeekerFilter, gender: gender}} as JobSeekerInputPagination
+        })
+      })
+    this.phoneNumberControl.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe( phoneNumber => {
+        this.jobSeekerInputPagination.update((current: JobSeekerInputPagination) => {
+          return {...current, jobSeekerFilter: {...current.jobSeekerFilter, phoneNumber: phoneNumber}} as JobSeekerInputPagination
+        })
+      })
+    this.statusControl.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe( status => {
+        this.jobSeekerInputPagination.update((current: JobSeekerInputPagination) => {
+          return {...current, jobSeekerFilter: {...current.jobSeekerFilter, status: status}} as JobSeekerInputPagination
+        })
+      })
   }
 
 }

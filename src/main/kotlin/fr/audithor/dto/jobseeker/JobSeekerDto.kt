@@ -1,4 +1,4 @@
-package fr.audithor.dto
+package fr.audithor.dto.jobseeker
 
 import model.Gender
 import model.JobSeekerStatus
