@@ -62,10 +62,10 @@ class JobSeekerService(
       params["lastName"] = it
     }
 
-    filter?.gender?.takeIf { it.name.isNotBlank() }?.let {
+    filter?.gender?.takeIf { it.isNotBlank() }?.let {
       query.append(" AND js.gender = :gender")
       countQuery.append(" AND js.gender = :gender")
-      params["gender"] = it
+      params["gender"] = Gender.valueOf(it)
     }
 
     filter?.phoneNumber?.takeIf { it.isNotBlank() }?.let {
@@ -74,10 +74,10 @@ class JobSeekerService(
       params["phoneNumber"] = it
     }
 
-    filter?.status?.takeIf { it.name.isNotBlank() }?.let {
+    filter?.status?.takeIf { it.isNotBlank() }?.let {
       query.append(" AND js.status = :status")
       countQuery.append(" AND js.status = :status")
-      params["status"] = it
+      params["status"] = JobSeekerStatus.valueOf(it)
     }
 
     val queryResult = entityManager.createQuery(query.toString(), JobSeeker::class.java)
