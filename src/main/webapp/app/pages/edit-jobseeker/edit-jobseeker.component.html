@@ -36,7 +36,7 @@
 
               <mat-form-field appearance="outline" class="comment-section">
                 <mat-label>Descriptif</mat-label>
-                <textarea matInput rows="2" formControlName="comments"></textarea>
+                <textarea matInput rows="2" formControlName="descriptif"></textarea>
               </mat-form-field>
 
             </form>
@@ -47,7 +47,7 @@
               </mat-slide-toggle>
               <div class="tool-right">
                 <!-- Bouton Prendre RDV -->
-                <button mat-raised-button color="primary" (click)="onNewRdv()">
+                <button mat-raised-button color="primary" (click)="onNewMeeting()">
                   <mat-icon>calendar_today</mat-icon>
                   Prendre RDV
                 </button>
@@ -61,10 +61,32 @@
                   <mat-icon>attachment</mat-icon>
                   Joindre un document
                 </button>
+
+
+                <!-- Bouton envoyé un mail -->
+                <label>
+                  <input type="file" hidden accept=".pdf,.doc,.docx" (change)="onFileUpload($event, 'cv')" />
+                </label>
+                <button mat-raised-button color="primary" type="button" (click)="sendMail()"
+                  [disabled]="!form.get('email')?.value">
+                  <mat-icon>send</mat-icon>
+                  Envoyer un mail
+                </button>
               </div>
             </div>
           </div>
         </div>
+
+        <form [formGroup]="form" class="mainForm">
+          <mat-form-field appearance="outline">
+            <mat-label>Dossier suivi par :</mat-label>
+            <mat-select formControlName="users">
+              <mat-option *ngFor="let user of users" [value]="user">
+                {{ user.firstName }} {{ user.lastName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form>
       </mat-card-content>
     </mat-card>
   </div>
@@ -134,12 +156,100 @@
         </mat-card>
 
         <!-- Informations complémentaires -->
-        <mat-card class="form-card form-card--micro-6" [ngClass]="{'editing-mode': !isReadOnly}">
+        <mat-card class="form-card form-card--micro-hybrid " [ngClass]="{'editing-mode': !isReadOnly}">
           <mat-card-title (click)="isCollapsedIC = !isCollapsedIC" class="clickable-title">
             <mat-icon>{{ isCollapsedIC ? 'short_text' : 'notes' }}</mat-icon>
             Informations complémentaires
           </mat-card-title>
+
           <mat-card-content [class.collapsed]="isCollapsedIC">
+
+            <!-- Situation familiale -->
+            <div class="radio-group-container">
+              <span class="radio-group-label">Situation familiale</span>
+              <mat-radio-group formControlName="famillySituation">
+                <mat-radio-button value="option1">Célibataire</mat-radio-button>
+                <mat-radio-button value="option2">Marié(e)</mat-radio-button>
+                <mat-radio-button value="option3">Concubinage</mat-radio-button>
+                <mat-radio-button value="option4">Pacsé(e)</mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+            <div class="children-section" formArrayName="childrenInformations">
+              <table mat-table [dataSource]="childrenControls" class="mat-elevation-z2">
+
+                <!-- Nom -->
+                <ng-container matColumnDef="nom">
+                  <th mat-header-cell *matHeaderCellDef>Nom</th>
+                  <td mat-cell *matCellDef="let child" [formGroup]="child">
+                    <input matInput formControlName="name" placeholder="Nom Enfant">
+                  </td>
+                </ng-container>
+
+                <!-- Prénom -->
+                <ng-container matColumnDef="prenom">
+                  <th mat-header-cell *matHeaderCellDef>Prénom</th>
+                  <td mat-cell *matCellDef="let child" [formGroup]="child">
+                    <input matInput formControlName="surname" placeholder="Prénom Enfant">
+                  </td>
+                </ng-container>
+
+                <!-- Garde alternée -->
+                <ng-container matColumnDef="garde">
+                  <th mat-header-cell *matHeaderCellDef>Garde alternée</th>
+                  <td mat-cell *matCellDef="let child" [formGroup]="child">
+                    <mat-checkbox formControlName="guardStatus"></mat-checkbox>
+                  </td>
+                </ng-container>
+
+                <!-- Droit de visite -->
+                <ng-container matColumnDef="visite">
+                  <th mat-header-cell *matHeaderCellDef>Droit de visite</th>
+                  <td mat-cell *matCellDef="let child" [formGroup]="child">
+                    <mat-checkbox formControlName="visitRight"></mat-checkbox>
+                  </td>
+                </ng-container>
+
+                <!-- Absent du foyer -->
+                <ng-container matColumnDef="absent">
+                  <th mat-header-cell *matHeaderCellDef>Absent du foyer</th>
+                  <td mat-cell *matCellDef="let child" [formGroup]="child">
+                    <mat-checkbox formControlName="presence">
+                    </mat-checkbox>
+                  </td>
+                </ng-container>
+
+                <!-- Supprimer -->
+                <ng-container matColumnDef="supprimer">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let child; let i = index">
+                    <button mat-icon-button color="warn" (click)="removeChild(i)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <!-- Header + Row -->
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsChildren"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumnsChildren;"></tr>
+
+              </table>
+
+              <button mat-raised-button (click)="addChild()" class="item-bouton-add">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+
+        <!-- Informations pratiques -->
+        <mat-card class="form-card form-card--micro-6" [ngClass]="{'editing-mode': !isReadOnly}">
+          <mat-card-title (click)="isCollapsedIPR = !isCollapsedIPR" class="clickable-title">
+            <mat-icon>{{ isCollapsedIPR ? 'short_text' : 'notes' }}</mat-icon>
+            Informations pratiques
+          </mat-card-title>
+          <mat-card-content [class.collapsed]="isCollapsedIPR">
 
             <mat-form-field appearance="outline">
               <mat-label>Moyens de transport</mat-label>
@@ -205,13 +315,11 @@
             Suivi de carrière
           </mat-card-title>
           <mat-card-content [class.collapsed]="isCollapsedSC">
-            <!-- Champ hors FormArray 
-            <mat-form-field appearance="fill">
-              <mat-label>Poste dernièrement occupé</mat-label>
-              <input matInput formControlName="jobTitle">
-            </mat-form-field>-->
-            <!-- FormArray -->
+
+
+
             <div formArrayName="experiences">
+
               <div *ngFor="let exp of experiencesControls; let i = index" [formGroupName]="i" class="experience-grid">
                 <mat-form-field class="item-entreprise" appearance="outline">
                   <mat-label>Entreprise</mat-label>
@@ -226,6 +334,19 @@
                 <mat-form-field class="item-fin" appearance="outline">
                   <mat-label>Fin</mat-label>
                   <input matInput formControlName="endDate" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Motif de fin</mat-label>
+                  <mat-select formControlName="endFor" multiple>
+                    <mat-option disabled>
+                      <input type="text" placeholder="Raison" [(ngModel)]="endForFilter"
+                        (ngModelChange)="filterEndFor()" matInput class="search-input" />
+                    </mat-option>
+                    <mat-option *ngFor="let endFor of endForList" [value]="endFor.value">
+                      {{ endFor.label }}
+                    </mat-option>
+                  </mat-select>
                 </mat-form-field>
 
                 <mat-form-field class="item-competence" appearance="outline">
@@ -303,35 +424,52 @@
         </mat-card>
 
         <!-- Démarches & Statut -->
-        <mat-card class="form-card form-card--micro-3" [ngClass]="{'editing-mode': !isReadOnly}">
+        <mat-card class="form-card form-card--complex-6" [ngClass]="{'editing-mode': !isReadOnly}">
           <mat-card-title (click)="isCollapsedDEM = !isCollapsedDEM" class="clickable-title">
             <mat-icon>{{ isCollapsedDEM ? 'event_available' : 'event_available' }}</mat-icon>
             Démarches & Statut
           </mat-card-title>
           <mat-card-content [class.collapsed]="isCollapsedDEM">
-            <mat-form-field appearance="fill">
-              <mat-label>Date dernier RDV</mat-label>
-              <input matInput [matDatepicker]="picker1" formControlName="dernierRdv">
-              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-              <mat-datepicker #picker1></mat-datepicker>
-            </mat-form-field>
+            <div formArrayName="ParcoursEmploi">
 
-            <mat-form-field appearance="fill">
-              <mat-label>Date prochain RDV</mat-label>
-              <input matInput [matDatepicker]="picker2" formControlName="prochainRdv">
-              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-              <mat-datepicker #picker2></mat-datepicker>
-            </mat-form-field>
+              <mat-form-field appearance="fill">
+                <mat-label>Statut</mat-label>
+                <mat-select formControlName="statut">
+                  <mat-option value="Sans emploi">Sans emploi</mat-option>
+                  <mat-option value="Retour à l'emploi">Retour à l'emploi</mat-option>
+                  <mat-option value="Nouveau demandeur">Nouveau demandeur</mat-option>
+                </mat-select>
+              </mat-form-field>
 
-            <mat-form-field appearance="fill">
-              <mat-label>Statut</mat-label>
-              <mat-select formControlName="statut">
-                <mat-option value="Sans emploi">Sans emploi</mat-option>
-                <mat-option value="Retour à l'emploi">Retour à l'emploi</mat-option>
-                <mat-option value="Nouveau demandeur">Nouveau demandeur</mat-option>
-              </mat-select>
-            </mat-form-field>
+              <mat-form-field appearance="fill">
+                <mat-label>Sans activité depuis le: </mat-label>
+                <input matInput [matDatepicker]="pickerUnemployedDate" formControlName="unemployedDate">
+                <mat-datepicker-toggle matSuffix [for]="pickerUnemployedDate"></mat-datepicker-toggle>
+                <mat-datepicker #pickerUnemployedDate></mat-datepicker>
+              </mat-form-field>
 
+              <mat-form-field appearance="fill">
+                <mat-label>Inscrit à France Travail depuis le:</mat-label>
+                <input matInput [matDatepicker]="pickerFranceTravailDate" formControlName="FranceTravailDate">
+                <mat-datepicker-toggle matSuffix [for]="pickerFranceTravailDate"></mat-datepicker-toggle>
+                <mat-datepicker #pickerFranceTravailDate></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Date dernier RDV</mat-label>
+                <input matInput [matDatepicker]="picker1" formControlName="dernierRdv">
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Date prochain RDV</mat-label>
+                <input matInput [matDatepicker]="picker2" formControlName="prochainRdv">
+                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+              </mat-form-field>
+
+            </div>
           </mat-card-content>
         </mat-card>
 
@@ -351,21 +489,30 @@
 
             <ng-container matColumnDef="date">
               <th mat-header-cell *matHeaderCellDef>Date</th>
-              <td mat-cell *matCellDef="let action">{{ action.date | date }}</td>
+              <td mat-cell *matCellDef="let meetingRow">{{ meetingRow.date | date }}</td>
             </ng-container>
 
             <ng-container matColumnDef="type">
               <th mat-header-cell *matHeaderCellDef>Type</th>
-              <td mat-cell *matCellDef="let action">{{ action.type }}</td>
+              <td mat-cell *matCellDef="let meetingRow">{{ meetingRow.type }}</td>
             </ng-container>
 
-            <ng-container matColumnDef="details">
-              <th mat-header-cell *matHeaderCellDef>Détails</th>
-              <td mat-cell *matCellDef="let action">{{ action.details }}</td>
+            <ng-container matColumnDef="note">
+              <th mat-header-cell *matHeaderCellDef>Note</th>
+              <td mat-cell *matCellDef="let meetingRow">{{ meetingRow.notes }}</td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="['date', 'type', 'details']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['date', 'type', 'details'];"></tr>
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let meetingRow">
+                <button mat-button (click)="editMeeting(meetingRow.id)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['date', 'type', 'note', 'action']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['date', 'type', 'note', 'action'];"></tr>
 
           </table>
         </mat-card-content>
@@ -390,7 +537,7 @@
 
         <section class="cv-section">
           <h3>À propos</h3>
-          <p>{{ form.get('comments')?.value }}</p>
+          <p>{{ form.get('descriptif')?.value }}</p>
         </section>
 
         <section class="cv-section">

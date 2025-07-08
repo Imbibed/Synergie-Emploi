@@ -1,0 +1,220 @@
+<div class="workplace">
+  <!--Profil Header -->
+  <div class="profile-header">
+    <mat-card class="profile-card">
+      <mat-card-title>Informations de profil</mat-card-title>
+      <mat-card-content>
+        <div class="profile-header">
+          <!-- Photo -->
+          <div class="photo-section">
+            <label>
+              <div class="photo"></div>
+              <div class="photo-button">
+                <input type="file" hidden accept="image/*" (change)="onPhotoChange($event)" />
+                <button mat-stroked-button type="button">
+                  <mat-icon>edit</mat-icon>Modifier
+                </button>
+              </div>
+            </label>
+          </div> 
+
+          <div class="descriptif-upload-wrapper">
+            <form [formGroup]="form" class="mainForm">
+              <div class="name-fields">
+
+                <mat-form-field appearance="fill">
+                  <mat-label>Nom de l'entreprise</mat-label>
+                  <input matInput formControlName="entreprise">
+                </mat-form-field>
+              </div>
+
+              <mat-form-field appearance="outline" class="comment-section">
+                <mat-label>Descriptif</mat-label>
+                <textarea matInput rows="4" formControlName="descriptif"></textarea>
+              </mat-form-field>
+            </form>
+
+            <div class="tool-section">
+              <mat-slide-toggle [checked]="isInterviewMode" (change)="onToggleMode($event)">
+                Mode saisie
+              </mat-slide-toggle>
+
+              <!-- Bouton Prendre RDV -->
+              <div class="tool-right">
+                <button class="menu-button" mat-raised-button (click)="onNewRdv()">
+                  <mat-icon>calendar_today</mat-icon>
+                  Prendre RDV
+                </button>
+
+
+                <!-- Bouton Upload -->
+                <label>
+                  <input type="file" hidden accept=".pdf,.doc,.docx" (change)="onFileUpload($event, 'cv')" />
+                </label>
+                <button class="menu-button" mat-raised-button type="button" (click)="onFileUpload($event, 'cv')">
+                  <mat-icon>attachment</mat-icon>
+                  Joindre un document
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <!-- Formulaire principal -->
+
+  <div class="main-columns">
+    <div class="edit-column">
+      <form [formGroup]="form" class="mainForm">
+
+        <mat-card class="form-card form-card--micro-6" [ngClass]="{'editing-mode': !isReadOnly}">
+          <mat-card-title (click)="isCollapsedIP = !isCollapsedIP" class="clickable-title">
+            <mat-icon>{{ isCollapsedIP ? 'lock_open' : 'lock' }}</mat-icon>
+            Informations contact
+          </mat-card-title>
+          <mat-card-content [class.collapsed]="isCollapsedIP">
+
+            <mat-form-field appearance="fill">
+              <mat-label>Nom</mat-label>
+              <input matInput formControlName="nom">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Prénom</mat-label>
+              <input matInput formControlName="prenom">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Téléphone</mat-label>
+              <input matInput formControlName="tel">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Portable</mat-label>
+              <input matInput formControlName="portable">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>E-mail</mat-label>
+              <input matInput formControlName="email">
+            </mat-form-field>
+
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="form-card form-card--micro-3" [ngClass]="{'editing-mode': !isReadOnly}">
+          <!-- Section localisation -->
+          <mat-card-title (click)="isCollapsedLOC = !isCollapsedLOC" class="clickable-title">
+            <mat-icon>{{ isCollapsedLOC ? 'navigation' : 'near_me' }}</mat-icon>Localisation</mat-card-title>
+          <mat-card-content [class.collapsed]="isCollapsedLOC">
+            <mat-form-field appearance="fill">
+              <mat-label>Adresse</mat-label>
+              <input matInput formControlName="adresse">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Ville</mat-label>
+              <input matInput formControlName="ville">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Zip code</mat-label>
+              <input matInput formControlName="zipCode">
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="form-card form-card--micro-3" [ngClass]="{'editing-mode': !isReadOnly}">
+          <!-- Section localisation -->
+          <mat-card-title (click)="isCollapsedMAP = !isCollapsedMAP" class="clickable-title">
+            <mat-icon>{{ isCollapsedMAP ? 'navigation' : 'near_me' }}</mat-icon>Cartopgraphie</mat-card-title>
+          <mat-card-content [class.collapsed]="isCollapsedMAP">
+            <!--Carte-->
+            <div class="map-wrapper">
+              <div id="map" class="map-container"></div>
+
+              <div class="coordinates-container">
+                <mat-form-field appearance="fill" class="coordinate-field">
+                  <mat-label>Latitude</mat-label>
+                  <input matInput [(ngModel)]="latitude" (change)="updateMarker()" />
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="coordinate-field">
+                  <mat-label>Longitude</mat-label>
+                  <input matInput [(ngModel)]="longitude" (change)="updateMarker()" />
+                </mat-form-field>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Boutons -->
+        <div class="button-container" *ngIf="!isReadOnly">
+          <button mat-raised-button class="btn-cancel" (click)="onCancel()">Annuler</button>
+          <button mat-raised-button class="btn-save" (click)="onSave()"><mat-icon>save</mat-icon>Enregistrer</button>
+        </div>
+      </form>
+
+      <!-- Actions menées -->
+      <mat-card class="history-card">
+        <mat-card-title>Historique des actions</mat-card-title>
+        <mat-card-content>
+          <table mat-table [dataSource]="actions" class="mat-elevation-z2">
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Date</th>
+              <td mat-cell *matCellDef="let action">{{ action.date | date }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Type</th>
+              <td mat-cell *matCellDef="let action">{{ action.type }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="details">
+              <th mat-header-cell *matHeaderCellDef>Détails</th>
+              <td mat-cell *matCellDef="let action">{{ action.details }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['date', 'type', 'details']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['date', 'type', 'details'];"></tr>
+
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <button class="toggle-handle mat-icon-button" (click)="toggleMatchesLog()">
+      <mat-icon *ngIf="isMatchesLog">chevron_left</mat-icon>
+      <mat-icon *ngIf="!isMatchesLog">chevron_right</mat-icon>
+    </button>
+
+    <!-- Lien demandeur d'emploi -->
+    <div class="cv-column" [class.hidden]="isMatchesLog">
+      <div class="cv-container">
+        <mat-card class="link-to-jobseeker">
+          <mat-card-title>Lien entreprise demandeurs</mat-card-title>
+          <mat-card-content>
+            <div class="timeline-container">
+              <div class="timeline">
+                <div class="timeline-item" *ngFor="let action of linkToCompany.data">
+                  <div class="timeline-dot"></div>
+                  <div class="timeline-content" [ngClass]="{
+                          'status-fin': action.status === 'Fin',
+                          'status-en-cours': action.status === 'En cours',
+                          'status-en-attente': action.status === 'En attente'
+                        }">
+                    <div class="timeline-date">{{ action.date | date }}</div>
+                    <div class="timeline-type">{{ action.type }}</div>
+                    <div class="timeline-details">{{ action.note }}</div>
+                    <div class="timeline-status">{{ action.status }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+  </div>
+</div>

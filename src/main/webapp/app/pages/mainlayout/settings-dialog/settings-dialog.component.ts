@@ -11,6 +11,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MailSettingsService } from '../../../services/mail-settings.service';
+import { QuillModule } from 'ngx-quill';
+import { Injectable } from '@angular/core';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 interface User {
@@ -42,7 +46,9 @@ interface Groups {
     MatFormFieldModule,
     MatInputModule,
     MatCardModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    QuillModule,
+    MatSnackBarModule
   ],
 })
 export class SettingsDialogComponent {
@@ -87,31 +93,43 @@ export class SettingsDialogComponent {
 
   showAddUserForm = false;
 
-  constructor(public dialogRef: MatDialogRef<SettingsDialogComponent>) { }
+  quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ header: [1, 2, 3, false] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link'],
+      ['clean']
+    ]
+  };
+  constructor(
+    public dialogRef: MatDialogRef<SettingsDialogComponent>,
+    public mailSettings: MailSettingsService,
+    private snackBar: MatSnackBar) { }
 
-// Pour la matrice utilisateur ↔ groupe
-permissions: { [userId: number]: { [groupId: number]: boolean } } = {};
+  // Pour la matrice utilisateur ↔ groupe
+  permissions: { [userId: number]: { [groupId: number]: boolean } } = {};
 
-// Pour la matrice groupe ↔ menu
-groupPermissions: { [groupId: number]: { [menu: string]: boolean } } = {};
+  // Pour la matrice groupe ↔ menu
+  groupPermissions: { [groupId: number]: { [menu: string]: boolean } } = {};
 
-ngOnInit(): void {
-  // Initialiser permissions utilisateur → groupe
-  this.users.forEach(user => {
-    this.permissions[user.id] = {};
+  ngOnInit(): void {
+    // Initialiser permissions utilisateur → groupe
+    this.users.forEach(user => {
+      this.permissions[user.id] = {};
+      this.groups.forEach(group => {
+        this.permissions[user.id][group.id] = false;
+      });
+    });
+
+    // Initialiser permissions groupe → menu
     this.groups.forEach(group => {
-      this.permissions[user.id][group.id] = false;
+      this.groupPermissions[group.id] = {};
+      this.menus.forEach(menu => {
+        this.groupPermissions[group.id][menu] = false;
+      });
     });
-  });
-
-  // Initialiser permissions groupe → menu
-  this.groups.forEach(group => {
-    this.groupPermissions[group.id] = {};
-    this.menus.forEach(menu => {
-      this.groupPermissions[group.id][menu] = false;
-    });
-  });
-}
+  }
 
   select(section: string) {
     this.activeSection = section;
@@ -160,5 +178,21 @@ ngOnInit(): void {
   savePermissions() {
     console.log('Droits sauvegardés :', this.permissions);
     // TODO: appeler un service si besoin
+  }
+
+
+  updateMailSettings(): void {
+    const { subject, body, signature } = this.mailSettings;
+
+    if (!subject || !body || !signature) {
+      this.snackBar.open('Veuillez remplir au moins le sujet et le corps du mail.', 'Fermer', { duration: 3000 });
+      return;
+    }
+
+    this.snackBar.open('Modèle de mail mis à jour avec succès.', 'Fermer', {
+      duration: 3000
+    });
+
+
   }
 }

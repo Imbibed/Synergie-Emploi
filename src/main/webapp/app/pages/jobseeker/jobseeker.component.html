@@ -1,10 +1,12 @@
 <div class="workplace">
-  <mat-card-title>Espace Accompagnement</mat-card-title>
-  <mat-card>
+  <mat-card-title class="jobSeeker-title">
+    <mat-icon class="big-white-icon">accessibility_new</mat-icon>Espace Accompagnement</mat-card-title>
+  <mat-card> 
+
     <mat-card-content>
       <!-- FILTRES -->
       <div class="filters-wrapper">
-        <div class="filters-container">
+        <div class="filters-container filters_jobseeker">
           <mat-form-field appearance="outline" class="filter-field">
             <mat-label>Civilité</mat-label>
             <mat-select [(value)]="filterGender" (selectionChange)="applyFilter()">
@@ -79,7 +81,7 @@
   <!--Tableau des demandeurs d'emploi-->
 
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 table_jobSeeker" matSort>
 
     <ng-container matColumnDef="gender">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Civilité</th>

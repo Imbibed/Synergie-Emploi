@@ -1,0 +1,38 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Rendez-vous</mat-card-title>
+    <button mat-icon-button (click)="openMeetingDialog()">
+      <mat-icon>add_circle_outline</mat-icon>
+    </button>
+  </mat-card-header>
+  <mat-card-content>
+    <h3>Rendez-vous à venir</h3>
+    <div *ngIf="upcomingMeetings.length === 0" class="no-meetings">
+      Aucun rendez-vous à venir.
+    </div>
+    <mat-list *ngIf="upcomingMeetings.length > 0">
+      <mat-list-item *ngFor="let meeting of upcomingMeetings" (click)="openMeetingDialog(meeting)">
+        <mat-icon matListItemIcon>event</mat-icon>
+        <div matListItemTitle>{{ meeting.date | date:'short' }} - {{ meeting.type }}</div>
+        <div matListItemLine>{{ meeting.note | slice:0:50 }}...</div>
+        <button mat-icon-button matListItemMeta (click)="$event.stopPropagation(); deleteMeeting(meeting.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+
+    <mat-divider></mat-divider>
+
+    <h3>Rendez-vous passés</h3>
+    <div *ngIf="pastMeetings.length === 0" class="no-meetings">
+      Aucun rendez-vous passé.
+    </div>
+    <mat-list *ngIf="pastMeetings.length > 0">
+      <mat-list-item *ngFor="let meeting of pastMeetings" (click)="openMeetingDialog(meeting)">
+        <mat-icon matListItemIcon>event_note</mat-icon>
+        <div matListItemTitle>{{ meeting.date | date:'short' }} - {{ meeting.type }}</div>
+        <div matListItemLine>{{ meeting.note | slice:0:50 }}...</div>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

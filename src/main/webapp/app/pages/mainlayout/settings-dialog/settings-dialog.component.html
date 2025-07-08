@@ -13,8 +13,14 @@
                 [class.active]="activeSection === 'groups'">Groupes</mat-list-item>
 
             <mat-list-item (click)="select('roles')" [class.active]="activeSection === 'roles'">Rôles</mat-list-item>
+
+            <mat-list-item (click)="select('updateMail')"
+                [class.active]="activeSection === 'updateMail'">Mailing</mat-list-item>
+
             <mat-list-item (click)="select('languages')"
                 [class.active]="activeSection === 'languages'">Langues</mat-list-item>
+
+
             <mat-list-item (click)="close()">Quitter</mat-list-item>
         </mat-nav-list>
     </div>
@@ -22,7 +28,6 @@
     <div class="content">
         <ng-container [ngSwitch]="activeSection">
             <div *ngSwitchCase="'general'">Contenu Général</div>
-
 
 
             <div *ngSwitchCase="'users'">
@@ -144,6 +149,33 @@
                 </div>
 
                 <button mat-raised-button color="primary" (click)="savePermissions()">Enregistrer les droits</button>
+            </div>
+
+            <div *ngSwitchCase="'updateMail'">
+                <h3>Edition des corps de mails</h3>
+
+                <mat-card class="updateMail-user-card">
+                    <form (ngSubmit)="updateMailSettings()" #userForm="ngForm" class="updateMail-form-inline">
+
+                        <label for="subject">Sujet</label>
+                        <input id="subject" type="text" name="subject" [(ngModel)]="mailSettings.subject"
+                            class="form-control" />
+
+                        <label for="body">Corps de l'e-mail</label>
+                        <quill-editor [(ngModel)]="mailSettings.body" name="body" [style]="{height: '200px'}"
+                            [modules]="quillModules">
+                        </quill-editor>
+
+                        <label for="signature">Signature</label>
+                        <quill-editor [(ngModel)]="mailSettings.signature" name="signature" [style]="{height: '150px'}"
+                            [modules]="quillModules">
+                        </quill-editor>
+
+                        <button mat-raised-button color="primary" type="submit">
+                            Enregistrer
+                        </button>
+                    </form>
+                </mat-card>
             </div>
 
 

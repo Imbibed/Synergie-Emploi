@@ -1,0 +1,159 @@
+mat-dialog-content {
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: hidden;
+    /* Important: cache le scrollbar de la dialog content elle-même si on gère le scroll interne */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.mat-tab-group {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.mat-tab-body-wrapper {
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.tab-content-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex-grow: 1;
+    /* Permet au contenu de l'onglet de prendre tout l'espace disponible */
+    overflow: auto;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.mat-form-field {
+    width: 100%; // Pour que les champs prennent toute la largeur dans les onglets
+}
+
+.notes-editor-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    /* Permet à ce conteneur de prendre le maximum de hauteur disponible */
+}
+
+// Cible l'élément Quill qui contient la zone de texte
+:host ::ng-deep .ql-editor {
+    flex-grow: 1;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+// S'assurer que la zone de l'éditeur prend l'espace du conteneur Quill
+:host ::ng-deep .ql-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+// Ajuster la barre d'outils de Quill si nécessaire
+:host ::ng-deep .ql-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--mat-card-background-color);
+    border-bottom: 1px solid var(--mat-divider-color);
+    padding: 8px 15px;
+}
+
+mat-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    mat-checkbox {
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+}
+
+.task-item {
+  display: flex; /* Le conteneur principal de la tâche utilise Flexbox */
+  align-items: flex-start; /* Aligne le contenu du haut (checkbox, description, meta) en haut */
+  justify-content: space-between; /* Repousse .task-details à gauche et .remove-task-button à droite */
+  width: 100%;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--mat-divider-color);
+  box-sizing: border-box; /* S'assure que padding et border sont inclus dans la largeur/hauteur */
+
+  .task-details {
+    display: flex;
+    flex-direction: column; /* Les éléments internes (header et meta) s'empilent verticalement */
+    flex-grow: 1; /* Permet aux détails de la tâche de prendre le maximum d'espace disponible */
+    margin-right: 10px; /* Espace entre les détails et le bouton de suppression */
+    min-width: 0; /* TRÈS IMPORTANT: Empêche le contenu (description longue) de forcer le conteneur à déborder, permettant l'enroulement */
+
+    .task-header {
+      display: flex; /* La checkbox et la description sont côte à côte */
+      align-items: center; /* Centre verticalement la checkbox et le texte */
+      margin-bottom: 8px; /* Espace sous l'en-tête de la tâche (avant la date/statut) */
+      min-width: 0; /* Empêche les éléments internes de forcer la largeur du header */
+    }
+
+    .task-checkbox {
+      flex-shrink: 0; /* Empêche la checkbox de rétrécir, elle conserve sa taille */
+      margin-right: 8px; /* Espace entre la checkbox et la description */
+    }
+
+    .task-description {
+      flex-grow: 1; /* Permet à la description de prendre tout l'espace restant dans le .task-header */
+      white-space: normal; /* Autorise le texte à s'enrouler sur plusieurs lignes */
+      word-break: break-word; /* Casse les mots très longs pour éviter le débordement */
+      min-width: 0; /* TRÈS IMPORTANT: Permet à la description de rétrécir et de s'enrouler sans créer de débordement invisible */
+      // Pour le débogage, tu peux temporairement activer ces lignes :
+      // border: 1px solid red;
+      // color: black !important;
+    }
+
+    .task-meta {
+      display: flex; /* La date et le statut sont côte à côte */
+      align-items: center;
+      gap: 15px; /* Espace entre la date et le statut */
+      font-size: 0.85em;
+      color: var(--mat-hint-text-color);
+      flex-wrap: wrap; /* Permet à la date et au statut de passer à la ligne si l'espace est insuffisant */
+      min-width: 0; /* Permet aux métadonnées de rétrécir */
+
+      /* Ajustements spécifiques pour les champs Material pour éviter les marges/paddings excessifs */
+      .mat-form-field-wrapper {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+      }
+      .mat-form-field-flex {
+        align-items: center !important;
+      }
+      .mat-form-field-infix {
+        padding: 0.5em 0 !important;
+      }
+    }
+  }
+
+  .remove-task-button {
+    flex-shrink: 0; /* Empêche le bouton de suppression de rétrécir */
+    align-self: center; /* Centre le bouton verticalement par rapport à la ligne de tâche */
+    // Pour le débogage :
+    // background-color: yellow !important;
+  }
+}
+
+/* S'assurer que le mat-list-item lui-même se comporte comme un conteneur flexible et s'adapte à son contenu */
+mat-list-item {
+  height: auto !important; /* Permet à la hauteur de s'ajuster au contenu dynamique */
+  display: flex !important; /* Force mat-list-item à être un conteneur flex */
+  align-items: flex-start !important; /* Aligne le contenu au début (haut) */
+}

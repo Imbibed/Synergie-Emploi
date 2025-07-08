@@ -16,6 +16,13 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition, } from '@angular/material/snack-bar';
+import { MailSettingsService } from '../../services/mail-settings.service';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MeetingsDialogComponent } from '../../pages/meetings/meetings-dialog/meetings-dialog.component';
+import { MeetingsService } from '../../services/meetings.service';
+import { Meeting } from '../../models/meeting.model';
+import { Jobseeker } from '../../models/jobseeker.model';
 import * as L from 'leaflet';
 
 interface Experience {
@@ -24,7 +31,33 @@ interface Experience {
   endDate: string;
   skills: string;
   description: string;
+  endFor: string;
+
 };
+
+interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+interface Child {
+  id: number;
+  name: string;
+  surname: string;
+  guardStatus: boolean;
+  visitRight: boolean;
+  presence: boolean;
+};
+
+interface ParcoursEmploi {
+  unemployedDate: Date;
+  FranceTravailDate: Date;
+  dernierRdv: Date,
+  prochainRdv: Date,
+}
+
 
 @Component({
   selector: 'app-jobseeker-edit',
@@ -49,18 +82,22 @@ interface Experience {
     MatRadioModule,
     MatSlideToggleModule,
     MatSnackBarModule,
+    MatCheckboxModule,
+    MatDialogModule
   ],
   templateUrl: './edit-jobseeker.component.html',
   styleUrls: ['./edit-jobseeker.component.scss']
 })
 export class JobseekerEditComponent implements OnInit {
   form!: FormGroup;
-  jobseekerId!: string;
+  jobseekerId!: number;
+  jobseekerDetails!: Jobseeker;
   isInterviewMode = false;
   isReadOnly = true;
   isCvHidden = false;
   isCollapsedSC = true;
   isCollapsedIP = true;
+  isCollapsedIPR = true;
   isCollapsedIC = true;
   isCollapsedLOC = true;
   isCollapsedMAP = true;
@@ -205,13 +242,61 @@ export class JobseekerEditComponent implements OnInit {
     { value: 'erp', label: 'ERP (SAP, Oracle, etc.)' },
     { value: 'crm', label: 'CRM (Salesforce, HubSpot...)' }
   ];
+
+  users: User[] = [
+    { id: 1, firstName: 'Florian', lastName: 'RAULT', email: 'florian.rault@live.fr' },
+    { id: 2, firstName: 'Ludovic', lastName: 'DELESQUE', email: 'ludovic.delesque@ville-canteleu.fr' },
+    { id: 3, firstName: 'Belinda', lastName: 'BOUCHRY', email: 'belinda?bouchry@ville-canteleu.fr' },
+    { id: 4, firstName: 'Amal', lastName: 'JOHN', email: 'amal.john@ville-canteleu.fr' },
+  ];
+
+  endForList = [
+    { value: 'career-change', label: 'Changement de carrière' },
+    { value: 'end-of-contract', label: 'Fin de contrat' },
+    { value: 'personal-projects', label: 'Projets personnels' },
+    { value: 'relocation', label: 'Déménagement' },
+    { value: 'health-reasons', label: 'Raisons de santé' },
+    { value: 'family-commitments', label: 'Engagements familiaux' },
+    { value: 'return-to-studies', label: 'Reprise des études' },
+    { value: 'entrepreneurship', label: 'Création d’entreprise' },
+    { value: 'burnout', label: 'Épuisement professionnel' },
+    { value: 'lack-of-growth', label: 'Manque de perspectives d’évolution' },
+    { value: 'company-closure', label: 'Fermeture de l’entreprise' },
+    { value: 'layoff', label: 'Licenciement économique' },
+    { value: 'contractual-disagreement', label: 'Désaccord contractuel' },
+    { value: 'maternity-leave', label: 'Congé maternité/paternité' },
+    { value: 'sabbatical', label: 'Congé sabbatique' },
+    { value: 'other', label: 'Autres...' }
+  ]
+
+  situationFamiliale: string = '';
+  nbEnfantsFoyer: number = 0;
+  nbEnfantsSupp: number = 0;
+  totalEnfants: number = 0;
+
+  childrenData: any[] = [];
+  displayedColumns: string[] = ['nom', 'prenom', 'garde', 'visite', 'absent', 'supprimer'];
+
+
   filteredSkillsList = [...this.skillsList];
   skillFilter = '';
+
 
   filterSkills(): void {
     const filterValue = this.skillFilter.toLowerCase();
     this.filteredSkillsList = this.skillsList.filter(skill =>
       skill.label.toLowerCase().includes(filterValue)
+    );
+  }
+
+  filteredendForList = [...this.endForList];
+  endForFilter = '';
+
+  filterEndFor(): void {
+    const filterValue = this.endForFilter.toLowerCase();
+
+    this.filteredendForList = this.endForList.filter(endFor =>
+      endFor.label.toLowerCase().includes(filterValue)
     );
   }
 
@@ -225,19 +310,37 @@ export class JobseekerEditComponent implements OnInit {
       startDate: [exp.startDate],
       endDate: [exp.endDate],
       skills: [exp.skills],
-      description: [exp.description]
+      description: [exp.description],
+      endFor: [exp.endFor]
     });
   }
 
-  /*Get pour que TS vois le champs experiences as a Formarray*/
+  /*Get pour que TS vois le champs as a Formarray*/
   get experiencesControls() {
     return (this.form.get('experiences') as FormArray).controls;
   }
 
+  /*Genration d'un nouvelle enfant */
+  private createChildForm(): FormGroup {
+    return this.fb.group({
+      name: [''],
+      surname: [''],
+      guardStatus: [true],
+      visitRight: [true],
+      presence: [true],
+    });
+  }
+
+  get childrenControls() {
+    return (this.form.get('childrenInformations') as FormArray).controls;
+  }
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
+    private mailSettings: MailSettingsService,
+    private dialog: MatDialog,
+    private meetingsService: MeetingsService
   ) {
     this.form = this.fb.group({
       urlPhoto: [''],
@@ -258,10 +361,14 @@ export class JobseekerEditComponent implements OnInit {
       qpv: [''],
       rth: [''],
       rsa: [''],
+      famillySituation: [''],
+      homeChild: [''],
+      suppChild: [''],
+      transportMeans: [[]],
       gradesLevel: [[]],
       lastGrade: [''],
       licenceTypes: [[]],     // tableau vide par défaut
-      transportMeans: [[]],
+      childrenInformations: this.fb.array([]),
       adresse: [''],
       ville: [''],
       zipCode: [''],
@@ -274,10 +381,47 @@ export class JobseekerEditComponent implements OnInit {
     });
   }
 
+  displayedColumnsChildren = ['nom', 'prenom', 'garde', 'visite', 'absent'];
+
+  /*GEstion de l'historique des actions*/
+  actions = new MatTableDataSource<Meeting>();
+  displayedColumnsActions: string[] = ['date', 'type', 'note', 'action'];
+
+
+
+  linkToJobseeker = new MatTableDataSource([
+    { date: new Date(), type: 'Michel Dupont', note: 'Période d\'essai inachevée' },
+    { date: new Date(), type: 'Gwendoline Henri', note: 'CDD 3 ans' },
+  ]);
+  displayedColumnsLink: string[] = ['date', 'type', 'note'];
+
 
   ngOnInit(): void {
-    this.setReadonly(this.isReadOnly);
-    this.jobseekerId = this.route.snapshot.paramMap.get('id')!;
+    //this.jobseekerId = this.route.snapshot.paramMap.get('id')!;
+
+    this.route.paramMap.subscribe(params => {
+      const idString = params.get('id'); // 'id' est le nom du paramètre dans ton chemin de route (e.g., /jobseeker/:id)
+      if (idString) {
+        this.jobseekerId = +idString; // Le '+' convertit la chaîne en nombre
+        console.log('Jobseeker ID from route:', this.jobseekerId);
+
+        // Une fois que tu as le jobseekerId, tu peux charger ses détails et ses meetings
+        this.loadJobseekerDetails(this.jobseekerId);
+        this.loadMeetingsForTable(this.jobseekerId);
+      } else {
+        console.warn('Jobseeker ID non trouvé dans la route. Chargement en mode création ou fallback.');
+        // Gérer le cas où l'ID n'est pas fourni (ex: mode création d'un nouveau jobseeker)
+        // Ou utiliser un ID par défaut pour le développement/test
+        this.jobseekerId = 101; // ID factice pour tester si aucun ID n'est dans l'URL
+        this.loadJobseekerDetails(this.jobseekerId);
+        this.loadMeetingsForTable(this.jobseekerId);
+      }
+    });
+
+    const childrenArray = this.form.get('childrenInformations') as FormArray;
+    if (childrenArray.length === 0) {
+      childrenArray.push(this.createChildForm());
+    }
 
     console.log('ID reçu dans l’URL :', this.jobseekerId);
     this.latitude = 49.450001;  // Canteleu
@@ -297,6 +441,8 @@ export class JobseekerEditComponent implements OnInit {
       }
     });
 
+    const selectedUser = this.users.find(u => u.id === 1);
+
 
     this.dataSource.data = [{
       id: 1, urlPhoto: '', entreprise: 'Bouygues Construction',
@@ -312,9 +458,18 @@ export class JobseekerEditComponent implements OnInit {
           startDate: '01/03/2019',
           endDate: '01/03/2024',
           skills: 'Gestion de chantier',
-          description: 'Responsable du suivi de chantiers en Île-de-France'
-        }
-      ]
+          description: 'Responsable du suivi de chantiers en Île-de-France',
+          endFor: 'Fin de contrat',
+        }],
+      famillySituation: 'option3',
+      childrenInformations: [{
+        name: 'Durand',
+        surname: 'Titouan',
+        guardStatus: true,
+        visitRight: false,
+        presence: false,
+      }],
+      followedBy: selectedUser,
     },
     {
       id: 2,
@@ -337,7 +492,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'React, Node.js',
           description: 'Développement d’applications web fullstack'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 3,
@@ -360,7 +515,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Encaissement',
           description: 'Accueil des clients et gestion de la caisse'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 4,
@@ -383,7 +538,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Maçonnerie',
           description: 'Travail sur chantiers de gros œuvre'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 5,
@@ -406,7 +561,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Soins infirmiers',
           description: 'Soins en service d’urgences'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 6,
@@ -429,7 +584,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Cyber sécurité',
           description: 'Mise en place de systèmes sécurisés'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 7,
@@ -452,7 +607,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Pédagogie',
           description: 'Enseignement en école primaire'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 8,
@@ -475,7 +630,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Conduite de train',
           description: 'Conduite de trains régionaux et intercités'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 9,
@@ -498,7 +653,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Soins quotidiens',
           description: 'Assistance aux patients et soins de base'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 10,
@@ -521,7 +676,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Gestion de chantier',
           description: 'Chef d’équipe sur chantiers routiers'
         }
-      ]
+      ], followedBy: selectedUser,
     }, {
       id: 11,
       urlPhoto: '',
@@ -543,7 +698,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Électricité industrielle',
           description: 'Maintenance de centrales électriques'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 12,
@@ -566,7 +721,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Analyse environnementale',
           description: 'Suivi des indicateurs d’impact écologique'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 13,
@@ -589,7 +744,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Distribution courrier',
           description: 'Tournée en zone périurbaine'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 14,
@@ -612,7 +767,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Vente & service client',
           description: 'Conseils et ventes en boutique Orange'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 15,
@@ -635,7 +790,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Conception CAO',
           description: 'Modélisation et tests sur Falcon 8X'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 16,
@@ -658,7 +813,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Encaissement',
           description: 'Accueil client et gestion de caisse'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 17,
@@ -681,7 +836,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Vente et conseil',
           description: 'Vente équipements de sport et conseils clients'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 18,
@@ -704,7 +859,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Administration RH',
           description: 'Participation aux entretiens et suivi RH'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 19,
@@ -727,7 +882,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Gestion thermique',
           description: 'Maintenance équipements thermiques'
         }
-      ]
+      ], followedBy: selectedUser,
     }, {
       id: 20,
       urlPhoto: '',
@@ -749,7 +904,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Contrôle transport',
           description: 'Contrôle des titres sur le réseau francilien'
         }
-      ]
+      ], followedBy: selectedUser,
     }, {
       id: 21,
       urlPhoto: '',
@@ -771,7 +926,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Assurance',
           description: 'Vente de produits d’assurance aux particuliers'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 22,
@@ -794,7 +949,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Production automobile',
           description: 'Assemblage pièces moteur'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 23,
@@ -817,7 +972,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Service voyageur',
           description: 'Accueil passagers et sécurité à bord'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 24,
@@ -840,7 +995,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Gestion réseaux',
           description: 'Entretien du réseau d’eaux usées'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 25,
@@ -863,7 +1018,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Interventions terrain',
           description: 'Maintenance et dépannage réseau'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 26,
@@ -886,7 +1041,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Polyvalence grande distribution',
           description: 'Rayonnage et caisse'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 27,
@@ -909,7 +1064,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Contrôle qualité',
           description: 'Suivi qualité sur chaîne de production'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 28,
@@ -932,7 +1087,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Développement web',
           description: 'Création d’applications internes pour le client Orange'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 29,
@@ -955,7 +1110,7 @@ export class JobseekerEditComponent implements OnInit {
           skills: 'Marketing opérationnel',
           description: 'Support campagnes publicitaires'
         }
-      ]
+      ], followedBy: selectedUser,
     },
     {
       id: 30,
@@ -995,10 +1150,11 @@ export class JobseekerEditComponent implements OnInit {
         qpv: jobseeker.qpv,
         rth: jobseeker.rth,
         rsa: jobseeker.rsa,
+        famillySituation: jobseeker.famillySituation,
+        childrenInformations: jobseeker.childrenInformations,
         gradesLevel: jobseeker.gradesLevel,
         lastGrade: jobseeker.lastGrade,
         statut: jobseeker.statut,
-        commentaires: jobseeker.commentaires,
         latitude: jobseeker.latitude,
         longitude: jobseeker.longitude,
         dernierRdv: jobseeker.dernierRdv,
@@ -1007,7 +1163,7 @@ export class JobseekerEditComponent implements OnInit {
         transportMeans: jobseeker.transportMeans,
         skills: jobseeker.skills,
         languages: jobseeker.languages,
-        comments: jobseeker.comments
+        descriptif: jobseeker.descriptif
       });
       // Gestion spéciale pour le FormArray `experiences`
       const expArray = this.form.get('experiences') as FormArray;
@@ -1024,6 +1180,14 @@ export class JobseekerEditComponent implements OnInit {
         });
       }
     }
+
+    /*Test actions - historique*/
+    this.jobseekerId = 101;
+    this.loadJobseekerDetails(this.jobseekerId);
+    this.loadMeetingsForTable(this.jobseekerId);
+
+    this.setReadonly(this.isReadOnly);
+
   }
 
   onPhotoChange(event: any) {
@@ -1034,12 +1198,28 @@ export class JobseekerEditComponent implements OnInit {
     console.log()
   }
 
-  onFileUpload(event: any, fileType: string) {
-    console.log(event, fileType)
+  onFileUpload(event: Event, type: string): void {
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      console.log(`Fichier reçu (${type}):`, file);
+    }
   }
 
-  setReadonly(readonly: boolean) {
-    if (readonly) {
+  sendMail(): void {
+    const email = this.form.get('email')?.value;
+    if (email) {
+      const subject = encodeURIComponent(this.mailSettings.subject);
+      const body = encodeURIComponent(this.mailSettings.body);
+      const signature = encodeURIComponent(this.mailSettings.signature);
+      window.location.href = `mailto:${email}?subject=${subject}&body=${body}&signature=${signature}`;
+    }
+  }
+  setReadonly(isReadonly: boolean): void {
+    this.isReadOnly = isReadonly;
+
+    if (this.isReadOnly) {
       this.form.disable();
     } else {
       this.form.enable();
@@ -1049,6 +1229,7 @@ export class JobseekerEditComponent implements OnInit {
     this.isCvHidden = true;
     this.isCollapsedSC = true;
     this.isCollapsedIP = true;
+    this.isCollapsedIPR = true;
     this.isCollapsedIC = true;
     this.isCollapsedLOC = true;
     this.isCollapsedMAP = true;
@@ -1060,6 +1241,7 @@ export class JobseekerEditComponent implements OnInit {
     this.isCvHidden = false;
     this.isCollapsedSC = true;
     this.isCollapsedIP = true;
+    this.isCollapsedIPR = true;
     this.isCollapsedIC = true;
     this.isCollapsedLOC = true;
     this.isCollapsedMAP = true;
@@ -1071,11 +1253,11 @@ export class JobseekerEditComponent implements OnInit {
     if (event.checked) {
       this.collapseAll();//editMode OK
       this.setReadonly(false);
-      this.isReadOnly = false;
+      //this.isReadOnly = false;
     } else {
       this.expandAll();//consultMode OK
       this.setReadonly(true);
-      this.isReadOnly = true;
+      //  this.isReadOnly = true;
     }
   }
 
@@ -1112,12 +1294,94 @@ export class JobseekerEditComponent implements OnInit {
   removeExperience(i: any) {
     console.log()
   }
+  addChild() {
+    const childrenArray = this.form.get('childrenInformations') as FormArray;
 
-  onNewRdv() {
-    console.log()
-    //this.router.navigate(['partnerRdv',this.partnerId]);
-    //TODO : CREER La page de gestion ndes rendez vous
+    // Vérifie si le dernier enfant est vide
+    const lastChild = childrenArray.at(childrenArray.length - 1);
+    if (lastChild && lastChild.invalid) {
+      // Optionnel : tu peux marquer tous les champs comme "touchés" pour afficher les erreurs
+      lastChild.markAllAsTouched();
+      return;
+    }
+
+    childrenArray.push(this.createChildForm());
+    console.log();
   }
+
+  removeChild(i: any) {
+    console.log()
+  }
+
+  onNewMeeting() {
+    // Navigue vers '/meeting' et ajoute le jobseekerId comme paramètre de requête
+    this.router.navigate(['meeting'], { queryParams: { jobseekerId: this.jobseekerId } });
+    console.log('Tentative de navigation vers page de création de RDV pour jobseeker:', this.jobseekerId);
+  }
+
+  editMeeting(meetingId: number) {
+    // 1. Récupérer les détails du rendez-vous à éditer
+    this.meetingsService.getMeetingById(meetingId).subscribe(
+      (meeting: Meeting) => {
+        // 2. Ouvrir la modale avec les données du rendez-vous
+        const dialogRef = this.dialog.open(MeetingsDialogComponent, {
+          width: '1200px',
+          height: '800px',
+          data: {
+            meeting: meeting,
+            jobseekerId: this.jobseekerId
+          }
+        });
+
+        // 3. Recharger la liste des rendez-vous après la fermeture de la modale
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            // Recharger les rendez-vous dans le tableau JobseekerEditComponent
+            // (tu auras probablement une méthode loadMeetingsForJobseeker() ici)
+            console.log('Meeting updated, reloading data in JobseekerEditComponent');
+            // Exemple: this.loadMeetingsForJobseeker(this.jobseekerId);
+          }
+        });
+      },
+      error => {
+        console.error('Erreur lors de la récupération du rendez-vous pour édition :', error);
+        // Gérer l'erreur, par ex. afficher un message à l'utilisateur
+      }
+    );
+  }
+
+  loadJobseekerDetails(id: number): void {
+    // Pour les tests, tu peux aussi mocker jobseekerService.getJobseekerById()
+    // Ou définir jobseekerDetails directement pour éviter une autre dépendance
+    this.jobseekerDetails = {
+      id: id,
+      urlPhoto: '',
+      nom: 'Demandeur',
+      prenom: 'Test',
+      email: 'test@example.com',
+      tel: '0123456789',
+      experiences: [],
+      entreprise: '',
+      descriptif: '',
+      urlAttachement: '',
+    };
+    console.log('Détails du demandeur d\'emploi factices chargés:', this.jobseekerDetails);
+  }
+
+  loadMeetingsForTable(jobseekerId: number): void {
+    this.meetingsService.getMeetingsByJobseekerId(jobseekerId).subscribe(
+      (meetings: Meeting[]) => {
+        // Met à jour la source de données du tableau avec les meetings factices
+        this.actions.data = meetings;
+        console.log('Données du tableau des meetings chargées (factices):', meetings);
+      },
+      error => {
+        console.error('Erreur lors du chargement des meetings pour le tableau :', error);
+        // Gérer l'erreur si le service factice ne retourne rien ou simule une erreur
+      }
+    );
+  }
+
 
   onSave() {
     console.log();
@@ -1129,6 +1393,21 @@ export class JobseekerEditComponent implements OnInit {
     this.router.navigate(['jobseeker']);
   }
 
+  updateTotalEnfants() {
+    const total = (this.nbEnfantsFoyer || 0) + (this.nbEnfantsSupp || 0);
+    if (this.totalEnfants !== total) {
+      this.totalEnfants = total;
+
+      // Met à jour le tableau
+      this.childrenData = Array.from({ length: total }, (_, i) => ({
+        nom: '',
+        prenom: '',
+        gardeAlternee: false,
+        droitVisite: false,
+        absentFoyer: false
+      }));
+    }
+  }
   /*GESTION LEAFLET MAP*/
 
   initMap(): void {
@@ -1159,19 +1438,6 @@ export class JobseekerEditComponent implements OnInit {
     }
     this.map.setView(latlng, 13);
   }
-
-  actions = new MatTableDataSource([
-    { date: new Date(), type: 'Entretien téléphonique', note: 'Interessé' },
-    { date: new Date(), type: 'Présentation', note: 'Envoyé à XYZ' },
-  ]);
-  displayedColumnsActions: string[] = ['date', 'type', 'note'];
-
-
-  linkToJobseeker = new MatTableDataSource([
-    { date: new Date(), type: 'Michel Dupont', note: 'Période d\'essai inachevée' },
-    { date: new Date(), type: 'Gwendoline Henri', note: 'CDD 3 ans' },
-  ]);
-  displayedColumnsLink: string[] = ['date', 'type', 'note'];
 
   toggleCv() {
     this.isCvHidden = !this.isCvHidden;

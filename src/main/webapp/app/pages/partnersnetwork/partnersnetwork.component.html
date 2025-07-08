@@ -1,10 +1,10 @@
 <div class="workplace">
-  <mat-card-title>Votre réseau partenaires</mat-card-title>
+  <mat-card-title class="partners-title"><mat-icon class="big-white-icon">work</mat-icon>Votre réseau partenaires</mat-card-title>
   <mat-card>
     <mat-card-content>
       <!-- FILTRES -->
-      <div class="filters-wrapper">
-        <div class="filters-container">
+      <div class="filters-wrapper filters_partners">
+        <div class="filters-container ">
           
 
           <mat-form-field appearance="outline" class="filter-field large">
@@ -61,7 +61,7 @@
 
   <!--Tableau du réseau partenaire-->
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 table_partners" matSort>
 
     <!-- Entreprise-->
     <ng-container matColumnDef="entreprise">

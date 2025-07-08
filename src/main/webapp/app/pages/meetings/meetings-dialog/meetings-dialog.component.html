@@ -1,0 +1,129 @@
+<h2 mat-dialog-title>
+  {{ data.meeting ? 'Éditer le Rendez-vous' : 'Nouveau Rendez-vous' }}
+  <span *ngIf="data.jobseekerId">pour {{ jobseekerDetails?.nom }} {{ jobseekerDetails?.prenom }}</span>
+</h2>
+
+<mat-dialog-content>
+  <mat-tab-group animationDuration="0ms">
+
+    <mat-tab label="Prise de note">
+      <div class="tab-content-container">
+        <h3>Détails du Rendez-vous</h3>
+        <form [formGroup]="meetingForm">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date et Heure</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date" readonly>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="type">
+              <mat-option value="Physique">Physique</mat-option>
+              <mat-option value="Visio">Visio</mat-option>
+              <mat-option value="Téléphone">Téléphone</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="meetingForm.get('type')?.value !== 'Téléphone'">
+            <mat-label>Lieu</mat-label>
+            <input matInput formControlName="location">
+          </mat-form-field>
+
+          <div class="notes-editor-container">
+
+            <quill-editor formControlName="note" [styles]="{'min-height': '500px'}" [modules]="quillConfig"
+              placeholder="Saisissez vos notes détaillées ici..."></quill-editor>
+          </div>
+        </form>
+      </div>
+    </mat-tab>
+
+
+    <mat-tab label="Tâches">
+      <div class="tab-content-container">
+        <h3>Liste des Tâches</h3>
+        <div *ngIf="tasks && tasks.length > 0; else noTasks">
+          <mat-list>
+            <mat-list-item *ngFor="let task of tasks; let i = index" class="task-item">
+
+              <div class="task-details">
+                <div class="task-header"> 
+               <span class="task-description">{{ task.description }}</span>
+                </div>
+
+                <div class="task-meta">
+                  <span *ngIf="task.dueDate"> Échéance: {{ task.dueDate | date:'shortDate' }}</span>
+
+                  <mat-form-field appearance="fill" class="task-status-field">
+                    <mat-select [value]="task.status" (selectionChange)="updateTaskStatus(task, $event.value)">
+                        <mat-option *ngFor="let s of taskStatuses" [value]="s.value">{{ s.viewValue }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              <button mat-icon-button (click)="removeTask(task.id!)" class="remove-task-button">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-list-item>
+          </mat-list>
+        </div>
+
+        <ng-template #noTasks>
+          <p>Aucune tâche pour ce rendez-vous.</p>
+        </ng-template>
+
+        <div class="add-task-section">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nouvelle tâche</mat-label>
+            <input matInput [(ngModel)]="newTaskDescription" (keyup.enter)="addTask()"
+              placeholder="Description de la tâche">
+          </mat-form-field>
+
+          <div class="task-input-row">
+
+            <mat-form-field appearance="outline" class="date-field">
+              <mat-label>Date d'échéance</mat-label>
+              <input matInput [matDatepicker]="taskPicker" [(ngModel)]="newDueDate">
+              <mat-datepicker-toggle matSuffix [for]="taskPicker"></mat-datepicker-toggle>
+              <mat-datepicker #taskPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="status-field">
+              <mat-label>Statut</mat-label>
+              <mat-select [(ngModel)]="newStatus">
+                <mat-option *ngFor="let s of taskStatuses" [value]="s.value">
+                  {{ s.viewValue }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-icon-button color="primary" (click)="addTask()" [disabled]="!newTaskDescription">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Prochain RDV">
+      <div class="tab-content-container">
+        <h3>Planification du Prochain Rendez-vous</h3>
+
+        <div class="tab-content-container">
+          <button mat-raised-button (click)="addMeetingToCalendar(meetingForm.value)" [disabled]="meetingForm.invalid">
+            <mat-icon>calendar_today</mat-icon> Ajouter au calendrier
+          </button>
+        </div>
+
+      </div>
+    </mat-tab>
+
+  </mat-tab-group> </mat-dialog-content> <mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Annuler</button>
+  <button mat-raised-button color="primary" (click)="saveMeeting()"
+    [disabled]="meetingForm.invalid">Enregistrer</button>
+</mat-dialog-actions>

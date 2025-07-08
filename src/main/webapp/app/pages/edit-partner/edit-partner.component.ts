@@ -20,7 +20,7 @@ import * as L from 'leaflet';
 
 interface Matches {
   nom: string;
-  prenom: string;
+  prenom: string; 
   contrat: string;
   startDate: string;
   endDate: string;
@@ -102,6 +102,7 @@ export class EditPartnerComponent implements OnInit {
       statut: [''],
     });
   }
+  
   dataSource = new MatTableDataSource<any>([]); // ton tableau source ici
   selection = new Set<any>(); // ou MatSelectionModel si tu veux plus avancé
 

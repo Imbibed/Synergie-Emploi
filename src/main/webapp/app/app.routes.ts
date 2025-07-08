@@ -10,10 +10,11 @@ import { PartnersnetworkComponent } from './pages/partnersnetwork/partnersnetwor
 import { EditPartnerComponent } from './pages/edit-partner/edit-partner.component';
 //Entreprise
 import { CompaniesnetworkComponent } from './pages/companiesnetwork/companiesnetwork.component';
-//import { EditCompanyComponent } from './pages/edit-partner/edit-partner.component';
+import { EditCompanyComponent } from './pages/edit-company/edit-company.component';
 
 //Tableau de bord
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { MeetingsComponent } from './pages/meetings/meetings.component';
 
 
 export const routes: Routes = [
@@ -26,11 +27,15 @@ export const routes: Routes = [
       { path: 'jobseeker', component: JobseekerComponent }, //Demandeurs d'emploi
       { path: 'jobseeker/:id', component: JobseekerEditComponent },//edition d'un demandeur d'emploi
 
+      { path: 'meeting', component: MeetingsComponent },
+      { path: 'meeting/new', component: MeetingsComponent }, // Route pour la création d'un NOUVEAU RDV
+      { path: 'meeting/:id', component: MeetingsComponent }, // Route pour l'édition/consultation d'un RDV existant
+
       { path: 'partner', component: PartnersnetworkComponent },//Réseau partenaire
       { path: 'partner/:id', component: EditPartnerComponent },//edition d'un demandeur d'emploi
 
       { path: 'companies', component: CompaniesnetworkComponent },//Réseau d'entreprise
-      //{ path: 'companies/:id', component: EditCompanyComponent },//edition d'une entreprise
+      { path: 'companies/:id', component: EditCompanyComponent },//edition d'une entreprise
 
     ]
   },
